@@ -61,6 +61,47 @@
     100% { transform: scale(1.1); opacity: 1; }
   }
 
+  /* --- SÉLECTEUR DE LANGUE --- */
+  .lang-switcher {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.4rem;
+    z-index: 100;
+    opacity: 0;
+    animation: fadeDown 0.6s ease-out forwards;
+  }
+
+  .lang-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lang-btn:hover {
+    background: var(--card-hi);
+    color: var(--text);
+    border-color: var(--border-gold);
+  }
+
+  .lang-btn.active {
+    background: var(--gold);
+    color: #1a1200;
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  }
+
+  @media (min-width: 1024px) {
+    .lang-switcher { top: 2rem; right: 2rem; }
+  }
+
   .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 4rem); }
 
   h1 {
@@ -74,6 +115,7 @@
     text-align: center;
     opacity: 0;
     animation: fadeDown 0.6s ease-out forwards;
+    padding: 0 40px; /* Évite le chevauchement avec le sélecteur de langue sur mobile */
   }
 
   @keyframes fadeDown {
@@ -100,7 +142,7 @@
     animation: fadeUp 0.6s ease-out 0.15s forwards;
   }
 
-  .card:nth-child(2) {
+  .card:nth-child(3) {
     animation-delay: 0.3s;
   }
 
@@ -383,7 +425,7 @@
   @media (max-width: 480px) {
     body { padding: 0.75rem; }
     .card { padding: 1rem; border-radius: 10px; }
-    h1 { text-align: left; }
+    h1 { text-align: left; padding: 0; margin-top: 2.5rem; }
     button { font-size: 15px; }
   }
 
@@ -406,63 +448,70 @@
       scroll-behavior: auto !important;
     }
     .status { opacity: 1; transform: none; }
-    h1, .card, .app-footer { opacity: 1; transform: none; }
+    h1, .card, .app-footer, .lang-switcher { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
 
+<!-- SÉLECTEUR DE LANGUE -->
+<div class="lang-switcher">
+  <button class="lang-btn" data-lang="fr" aria-label="Français">FR</button>
+  <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+  <button class="lang-btn" data-lang="it" aria-label="Italiano">IT</button>
+</div>
+
 <div class="wrap">
-  <h1>🔐 One link One secret</h1>
+  <h1 data-i18n="app_title">🔐 One link One secret</h1>
 
   <div id="createPanel" class="card">
-    <h2>Créer un secret</h2>
+    <h2 data-i18n="create_title">Créer un secret</h2>
 
-    <label class="label" for="plain">Secret</label>
-    <textarea id="plain" placeholder="Votre secret (mot de passe, clé PGP, etc.)…"></textarea>
+    <label class="label" for="plain" data-i18n="label_secret">Secret</label>
+    <textarea id="plain" data-i18n-placeholder="placeholder_secret" placeholder="Votre secret (mot de passe, clé PGP, etc.)…"></textarea>
 
     <hr class="divider">
 
-    <label class="label" for="pass">Mot de passe de protection <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0;font-size:0.8rem">(optionnel)</span></label>
-    <input type="password" id="pass" placeholder="Mot de passe (facultatif)" autocomplete="new-password">
+    <label class="label" for="pass" data-i18n="label_pwd_opt">Mot de passe de protection (optionnel)</label>
+    <input type="password" id="pass" data-i18n-placeholder="placeholder_pwd_opt" placeholder="Mot de passe (facultatif)" autocomplete="new-password">
 
-    <label class="label" for="pass2">Confirmation</label>
-    <input type="password" id="pass2" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+    <label class="label" for="pass2" data-i18n="label_confirm">Confirmation</label>
+    <input type="password" id="pass2" data-i18n-placeholder="placeholder_confirm" placeholder="Confirmer le mot de passe" autocomplete="new-password">
 
-    <small class="hint">
-      💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.
+    <small class="hint" id="hint_text" data-i18n-html="hint_text">
+      💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.<br><br>
       ⚠️ Toute personne possédant ce lien pourra alors lire le secret — le lien <em>devient</em> le secret.
     </small>
 
     <button id="btnCreate">
-      <span id="btnCreateText">Chiffrer et générer le lien</span>
+      <span id="btnCreateText" data-i18n="btn_create">Chiffrer et générer le lien</span>
     </button>
     <p class="status" id="createStatus"></p>
 
     <div id="linkResult" class="hidden">
-      <p class="label">Lien à partager</p>
+      <p class="label" data-i18n="link_to_share">Lien à partager</p>
       <pre id="linkOut"></pre>
-      <button class="alt" id="btnCopy">Copier le lien</button>
+      <button class="alt" id="btnCopy" data-i18n="btn_copy">Copier le lien</button>
     </div>
   </div>
 
   <div id="decryptPanel" class="card hidden">
-    <h2>Déchiffrer un secret</h2>
-    <p id="decryptIntro" style="margin-top:0;color:var(--text-dim);font-size:0.9rem">Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.</p>
+    <h2 data-i18n="decrypt_title">Déchiffrer un secret</h2>
+    <p id="decryptIntro" style="margin-top:0;color:var(--text-dim);font-size:0.9rem" data-i18n="decrypt_intro_pwd">Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.</p>
 
     <div id="pwdBlock">
-      <label class="label" for="dpass">Mot de passe</label>
-      <input type="password" id="dpass" placeholder="Mot de passe" autocomplete="off">
+      <label class="label" for="dpass" data-i18n="label_pwd">Mot de passe</label>
+      <input type="password" id="dpass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe" autocomplete="off">
     </div>
 
     <button id="btnDecrypt">
-      <span id="btnDecryptText">Déchiffrer</span>
+      <span id="btnDecryptText" data-i18n="btn_decrypt">Déchiffrer</span>
     </button>
     <pre id="dout"></pre>
   </div>
 
   <!-- SIGNATURE -->
-  <footer class="app-footer">
+  <footer class="app-footer" id="footer_text" data-i18n-html="footer_text">
     Développé par <a href="https://bstudio136.github.io/mylink/" target="_blank" rel="noopener noreferrer">Bstudio136</a>
   </footer>
 </div>
@@ -470,26 +519,193 @@
 <!-- MODALE -->
 <div id="customModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <h3 class="modal-title">⚠️ Aucun mot de passe saisi</h3>
-    <div class="modal-content">
+    <h3 class="modal-title" data-i18n="modal_title">⚠️ Aucun mot de passe saisi</h3>
+    <div class="modal-content" id="modal_content" data-i18n-html="modal_desc">
       Le lien généré contiendra la clé de déchiffrement.<br><br>
       Toute personne qui possède ce lien pourra lire le secret.
     </div>
     <div class="modal-actions">
-      <button id="modalCancel" class="alt">Annuler</button>
-      <button id="modalConfirm">Continuer</button>
+      <button id="modalCancel" class="alt" data-i18n="btn_cancel">Annuler</button>
+      <button id="modalConfirm" data-i18n="btn_continue">Continuer</button>
     </div>
   </div>
 </div>
 
 <script>
-const ITERATIONS = 1000000;
+// --- TRADUCTIONS ---
+const translations = {
+  fr: {
+    app_title: "🔐 One link One secret",
+    create_title: "Créer un secret",
+    label_secret: "Secret",
+    placeholder_secret: "Votre secret (mot de passe, clé PGP, etc.)…",
+    label_pwd_opt: "Mot de passe de protection (optionnel)",
+    placeholder_pwd_opt: "Mot de passe (facultatif)",
+    label_confirm: "Confirmation",
+    placeholder_confirm: "Confirmer le mot de passe",
+    hint_text: "💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.<br><br>⚠️ Toute personne possédant ce lien pourra alors lire le secret — le lien <em>devient</em> le secret.",
+    btn_create: "Chiffrer et générer le lien",
+    link_to_share: "Lien à partager",
+    btn_copy: "Copier le lien",
+    decrypt_title: "Déchiffrer un secret",
+    decrypt_intro_pwd: "Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.",
+    decrypt_intro_nopwd: "Ce secret est protégé par le lien uniquement (sans mot de passe). Cliquez pour le révéler.",
+    label_pwd: "Mot de passe",
+    placeholder_pwd: "Mot de passe",
+    btn_decrypt: "Déchiffrer",
+    btn_reveal: "Révéler le secret",
+    footer_text: "Développé par <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
+    modal_title: "⚠️ Aucun mot de passe saisi",
+    modal_desc: "Le lien généré contiendra la clé de déchiffrement.<br><br>Toute personne qui possède ce lien pourra lire le secret.",
+    btn_cancel: "Annuler",
+    btn_continue: "Continuer",
+    
+    // JS Dynamique
+    err_empty_secret: "Le secret est vide.",
+    err_pwd_mismatch: "Les mots de passe ne correspondent pas.",
+    loading_encrypt_pwd: "Chiffrement en cours... (1 000 000 itérations PBKDF2)",
+    loading_encrypt_nopwd: "Chiffrement en cours... (clé aléatoire 256 bits)",
+    warn_no_pwd: "⚠️ Lien généré sans mot de passe. Toute personne ayant ce lien peut lire le secret.",
+    ok_pwd: "✅ Lien généré et protégé par mot de passe. Le secret reste dans le fragment (#), jamais envoyé à un serveur.",
+    err_prefix: "Erreur : ",
+    copied: "✅ Copié !",
+    copy_success: "Lien copié dans le presse-papiers.",
+    copy_fail: "Copie impossible. Sélectionnez le lien manuellement.",
+    loading_decrypt: "Patientez...",
+    err_decrypt_pwd: "❌ Mot de passe incorrect ou données corrompues.",
+    err_decrypt_nopwd: "❌ Données corrompues."
+  },
+  en: {
+    app_title: "🔐 One link One secret",
+    create_title: "Create a secret",
+    label_secret: "Secret",
+    placeholder_secret: "Your secret (password, PGP key, etc.)…",
+    label_pwd_opt: "Password protection (optional)",
+    placeholder_pwd_opt: "Password (optional)",
+    label_confirm: "Confirmation",
+    placeholder_confirm: "Confirm password",
+    hint_text: "💡 <strong>Leave both fields empty</strong> to generate a password-less link.<br><br>⚠️ Anyone with this link will be able to read the secret — the link <em>becomes</em> the secret.",
+    btn_create: "Encrypt and generate link",
+    link_to_share: "Link to share",
+    btn_copy: "Copy link",
+    decrypt_title: "Decrypt a secret",
+    decrypt_intro_pwd: "An encrypted secret is present in the link. Enter the password to reveal it.",
+    decrypt_intro_nopwd: "This secret is protected by the link only (no password). Click to reveal it.",
+    label_pwd: "Password",
+    placeholder_pwd: "Password",
+    btn_decrypt: "Decrypt",
+    btn_reveal: "Reveal secret",
+    footer_text: "Developed by <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
+    modal_title: "⚠️ No password entered",
+    modal_desc: "The generated link will contain the decryption key.<br><br>Anyone who has this link can read the secret.",
+    btn_cancel: "Cancel",
+    btn_continue: "Continue",
+    
+    // JS Dynamique
+    err_empty_secret: "The secret is empty.",
+    err_pwd_mismatch: "Passwords do not match.",
+    loading_encrypt_pwd: "Encrypting... (1,000,000 PBKDF2 iterations)",
+    loading_encrypt_nopwd: "Encrypting... (random 256-bit key)",
+    warn_no_pwd: "⚠️ Link generated without password. Anyone with this link can read the secret.",
+    ok_pwd: "✅ Link generated and protected by password. The secret remains in the fragment (#), never sent to a server.",
+    err_prefix: "Error: ",
+    copied: "✅ Copied!",
+    copy_success: "Link copied to clipboard.",
+    copy_fail: "Copy failed. Select the link manually.",
+    loading_decrypt: "Please wait...",
+    err_decrypt_pwd: "❌ Incorrect password or corrupted data.",
+    err_decrypt_nopwd: "❌ Corrupted data."
+  },
+  it: {
+    app_title: "🔐 One link One secret",
+    create_title: "Crea un segreto",
+    label_secret: "Segreto",
+    placeholder_secret: "Il tuo segreto (password, chiave PGP, ecc.)…",
+    label_pwd_opt: "Protezione con password (opzionale)",
+    placeholder_pwd_opt: "Password (opzionale)",
+    label_confirm: "Conferma",
+    placeholder_confirm: "Conferma la password",
+    hint_text: "💡 <strong>Lascia entrambi i campi vuoti</strong> per generare un link senza password.<br><br>⚠️ Chiunque possieda questo link potrà leggere il segreto — il link <em>diventa</em> il segreto.",
+    btn_create: "Crittografa e genera link",
+    link_to_share: "Link da condividere",
+    btn_copy: "Copia link",
+    decrypt_title: "Decifra un segreto",
+    decrypt_intro_pwd: "Un segreto crittografato è presente nel link. Inserisci la password per rivelarlo.",
+    decrypt_intro_nopwd: "Questo segreto è protetto solo dal link (nessuna password). Clicca per rivelarlo.",
+    label_pwd: "Password",
+    placeholder_pwd: "Password",
+    btn_decrypt: "Decifra",
+    btn_reveal: "Rivela segreto",
+    footer_text: "Sviluppato da <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
+    modal_title: "⚠️ Nessuna password inserita",
+    modal_desc: "Il link generato conterrà la chiave di decrittazione.<br><br>Chiunque abbia questo link può leggere il segreto.",
+    btn_cancel: "Annulla",
+    btn_continue: "Continua",
+    
+    // JS Dynamique
+    err_empty_secret: "Il segreto è vuoto.",
+    err_pwd_mismatch: "Le password non corrispondono.",
+    loading_encrypt_pwd: "Crittografia in corso... (1.000.000 iterazioni PBKDF2)",
+    loading_encrypt_nopwd: "Crittografia in corso... (chiave casuale a 256 bit)",
+    warn_no_pwd: "⚠️ Link generato senza password. Chiunque abbia questo link può leggere il segreto.",
+    ok_pwd: "✅ Link generato e protetto da password. Il segreto rimane nel frammento (#), mai inviato a un server.",
+    err_prefix: "Errore: ",
+    copied: "✅ Copiato!",
+    copy_success: "Link copiato negli appunti.",
+    copy_fail: "Copia non riuscita. Seleziona il link manualmente.",
+    loading_decrypt: "Attendere prego...",
+    err_decrypt_pwd: "❌ Password errata o dati corrotti.",
+    err_decrypt_nopwd: "❌ Dati corrotti."
+  }
+};
+
+let currentLang = 'fr';
+
+// --- GESTION DE LA LANGUE ---
+function t(key) {
+  return translations[currentLang][key] || key;
+}
+
+function setLanguage(lang) {
+  if (!translations[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('app_lang', lang);
+  
+  // Mettre à jour les balises HTML
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.getAttribute('data-i18n-html'));
+  });
+
+  // Mettre à jour l'état des boutons de langue
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // Mettre à jour la modale si ouverte
+  if (!document.getElementById('customModal').classList.contains('hidden')) {
+    document.getElementById('modalConfirm').textContent = t('btn_continue');
+    document.getElementById('modalCancel').textContent = t('btn_cancel');
+  }
+}
+
+// Initialiser les clics sur les boutons de langue
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
+
 
 // --- HELPERS UI ---
 function setStatus(el, text, type = '') {
-  el.className = 'status ' + type; // Reset des classes
+  el.className = 'status ' + type; 
   el.textContent = text;
-  // Force le navigateur à prendre en compte le changement
   void el.offsetWidth; 
   el.classList.add('show');
 }
@@ -498,11 +714,11 @@ function setLoading(btn, loadingText, isLoading) {
   const textSpan = btn.querySelector('span');
   if (isLoading) {
     btn.disabled = true;
-    btn.dataset.originalText = textSpan.textContent;
+    btn.dataset.originalKey = textSpan.getAttribute('data-i18n');
     textSpan.innerHTML = `<span class="spinner"></span>${loadingText}`;
   } else {
     btn.disabled = false;
-    textSpan.textContent = btn.dataset.originalText || textSpan.textContent;
+    textSpan.textContent = t(btn.dataset.originalKey);
   }
 }
 
@@ -541,7 +757,7 @@ async function deriveKey(password, salt){
   const enc=new TextEncoder();
   const km=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);
   return crypto.subtle.deriveKey(
-    {name:'PBKDF2',salt,iterations:ITERATIONS,hash:'SHA-256'},
+    {name:'PBKDF2',salt,iterations:1000000,hash:'SHA-256'},
     km, {name:'AES-GCM',length:256}, false,['encrypt','decrypt']
   );
 }
@@ -590,9 +806,8 @@ function showDecrypt(payload){
   
   createPanel.classList.add('hidden');
   decryptPanel.classList.remove('hidden');
-  // Relancer l'animation d'entrée sur le panel
   decryptPanel.style.animation = 'none';
-  decryptPanel.offsetHeight; // trigger reflow
+  decryptPanel.offsetHeight; 
   decryptPanel.style.animation = 'fadeUp 0.6s ease-out forwards';
 
   const pwdBlock = document.getElementById('pwdBlock');
@@ -604,17 +819,19 @@ function showDecrypt(payload){
 
   if (payload.v === 2) {
     pwdBlock.classList.add('hidden');
-    intro.textContent = 'Ce secret est protégé par le lien uniquement (sans mot de passe). Cliquez pour le révéler.';
-    btnText.textContent = 'Révéler le secret';
+    intro.textContent = t('decrypt_intro_nopwd');
+    btnText.textContent = t('btn_reveal');
+    btnText.setAttribute('data-i18n', 'btn_reveal');
   } else {
-    intro.textContent = 'Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.';
-    btnText.textContent = 'Déchiffrer';
+    intro.textContent = t('decrypt_intro_pwd');
+    btnText.textContent = t('btn_decrypt');
+    btnText.setAttribute('data-i18n', 'btn_decrypt');
   }
 
   btn.onclick = async () => {
     out.className = '';
     out.textContent = '';
-    setLoading(btn, 'Patientez...', true);
+    setLoading(btn, t('loading_decrypt'), true);
 
     try {
       const pt = await decrypt(payload, pwdInput.value);
@@ -624,7 +841,7 @@ function showDecrypt(payload){
       history.replaceState(null, '', location.pathname + location.search);
     } catch(e) {
       out.className = 'err';
-      out.textContent = payload.v === 2 ? '❌ Données corrompues.' : '❌ Mot de passe incorrect ou données corrompues.';
+      out.textContent = payload.v === 2 ? t('err_decrypt_nopwd') : t('err_decrypt_pwd');
     } finally {
       setLoading(btn, '', false);
     }
@@ -632,6 +849,10 @@ function showDecrypt(payload){
 }
 
 (function init(){
+  // Charger la langue sauvegardée ou par défaut FR
+  const savedLang = localStorage.getItem('app_lang') || 'fr';
+  setLanguage(savedLang);
+
   const payload = parseFragment(location.hash);
   if (payload) { showDecrypt(payload); return; }
 
@@ -642,15 +863,15 @@ function showDecrypt(payload){
     const p2 = document.getElementById('pass2').value;
     const st = document.getElementById('createStatus');
 
-    if (!plain) { setStatus(st, 'Le secret est vide.', 'err'); return; }
-    if (p1 !== p2) { setStatus(st, 'Les mots de passe ne correspondent pas.', 'err'); return; }
+    if (!plain) { setStatus(st, t('err_empty_secret'), 'err'); return; }
+    if (p1 !== p2) { setStatus(st, t('err_pwd_mismatch'), 'err'); return; }
 
     if (!p1) {
       const ok = await customConfirm();
       if (!ok) return;
     }
 
-    setLoading(btn, 'Chiffrement...', true);
+    setLoading(btn, p1 ? t('loading_encrypt_pwd') : t('loading_encrypt_nopwd'), true);
     st.classList.remove('show');
 
     try {
@@ -668,12 +889,12 @@ function showDecrypt(payload){
       linkResult.classList.add('slide-down');
 
       if (payload.v === 2) {
-        setStatus(st, '⚠️ Lien généré sans mot de passe. Toute personne ayant ce lien peut lire le secret.', 'warn');
+        setStatus(st, t('warn_no_pwd'), 'warn');
       } else {
-        setStatus(st, '✅ Lien généré et protégé par mot de passe. Le secret reste dans le fragment (#), jamais envoyé à un serveur.', 'ok');
+        setStatus(st, t('ok_pwd'), 'ok');
       }
     } catch(e) {
-      setStatus(st, 'Erreur : ' + e.message, 'err');
+      setStatus(st, t('err_prefix') + e.message, 'err');
     } finally {
       setLoading(btn, '', false);
     }
@@ -685,18 +906,18 @@ function showDecrypt(payload){
     const st = document.getElementById('createStatus');
 
     navigator.clipboard.writeText(txt).then(() => {
-      const orig = btn.textContent;
-      btn.textContent = '✅ Copié !';
+      const origKey = 'btn_copy';
+      btn.textContent = t('copied');
       btn.style.color = 'var(--ok)';
       btn.style.borderColor = 'var(--ok)';
       setTimeout(() => {
-        btn.textContent = orig;
+        btn.textContent = t(origKey);
         btn.style.color = '';
         btn.style.borderColor = '';
       }, 2000);
-      setStatus(st, 'Lien copié dans le presse-papiers.', 'ok');
+      setStatus(st, t('copy_success'), 'ok');
     }).catch(() => {
-      setStatus(st, 'Copie impossible. Sélectionnez le lien manuellement.', 'err');
+      setStatus(st, t('copy_fail'), 'err');
     });
   };
 })();
