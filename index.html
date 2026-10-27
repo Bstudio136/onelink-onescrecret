@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>One link One secret</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0a0a;
+    --bg-soft: #121212;
+    --card: #161616;
+    --card-hi: #1c1c1c;
+    --border: #2a2a2a;
+    --border-gold: rgba(212, 175, 55, 0.35);
+    --gold: #d4af37;
+    --gold-hi: #f5c518;
+    --gold-soft: rgba(212, 175, 55, 0.12);
+    --text: #f5f1e6;
+    --text-dim: #a8a29a;
+    --warn: #fbbf24;
+    --err: #f87171;
+    --ok: #4ade80;
+    --radius: 12px;
+    --shadow-gold: 0 0 0 1px var(--border-gold), 0 8px 32px rgba(212, 175, 55, 0.08);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    padding: clamp(1rem, 3vw, 2.5rem) clamp(0.75rem, 3vw, 1.5rem);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.05rem);
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Halo doré animé en arrière-plan */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.06), transparent 45%);
+    z-index: -1;
+    animation: bgPulse 12s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes bgPulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.1); opacity: 1; }
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 4rem); }
+
+  h1 {
+    font-size: clamp(1.3rem, 1rem + 1.2vw, 1.8rem);
+    margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+    letter-spacing: -0.01em;
+    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+    opacity: 0;
+    animation: fadeDown 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h2 {
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.15rem);
+    margin: 0 0 0.75rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .card {
+    background: linear-gradient(180deg, var(--card-hi), var(--card));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin: 1rem 0;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    transition: border-color .3s, box-shadow .3s, transform .3s;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 0.15s forwards;
+  }
+
+  .card:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:focus-within {
+    border-color: var(--border-gold);
+    box-shadow: var(--shadow-gold);
+    transform: translateY(-2px);
+  }
+
+  textarea, input {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    margin: 0.4rem 0;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+  }
+
+  textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+
+  textarea:focus, input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: #0d0d0d;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  }
+
+  textarea::placeholder, input::placeholder { color: var(--text-dim); }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.4rem;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
+    color: #1a1200;
+    cursor: pointer;
+    transition: transform .15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow .2s, background .2s, opacity .2s;
+    width: 100%;
+    margin-top: 0.6rem;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  button::after { /* Effet de brillance au survol */
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+  }
+
+  button:hover::after { left: 150%; }
+
+  button:hover {
+    background: linear-gradient(135deg, #ffe066, var(--gold-hi));
+    box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
+    transform: translateY(-2px);
+  }
+
+  button:active { transform: translateY(1px) scale(0.98); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+  button:disabled::after { display: none; }
+
+  button.alt {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--border-gold);
+    box-shadow: none;
+  }
+
+  button.alt:hover { background: var(--gold-soft); border-color: var(--gold); }
+
+  /* Spinner d'attente dans les boutons */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(26, 18, 0, 0.3);
+    border-top-color: #1a1200;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+  }
+
+  button.alt .spinner {
+    border-color: rgba(212, 175, 55, 0.3);
+    border-top-color: var(--gold);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  pre {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 3rem;
+    margin: 0.6rem 0 0;
+    font-size: clamp(0.8rem, 0.7rem + 0.4vw, 0.9rem);
+    font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
+    color: var(--text);
+    overflow-x: auto;
+    transition: opacity 0.4s ease, filter 0.4s ease;
+  }
+
+  /* Animation de révélation du secret */
+  pre.reveal-blur {
+    animation: revealSecret 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes revealSecret {
+    0% { filter: blur(8px); opacity: 0.3; transform: scale(0.98); }
+    100% { filter: blur(0); opacity: 1; transform: scale(1); }
+  }
+
+  #linkOut { border-color: var(--border-gold); background: rgba(212, 175, 55, 0.04); }
+
+  .status {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    min-height: 1.2em;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .status.show { opacity: 1; transform: translateX(0); }
+  .ok { color: var(--ok); }
+  .err { color: var(--err); }
+  .warn { color: var(--warn); }
+
+  .hidden { display: none !important; }
+
+  .label {
+    display: block;
+    margin-top: 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .hint {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .hint strong { color: var(--warn); font-weight: 600; }
+
+  .divider {
+    margin: 1.2rem 0 0.2rem;
+    border: none;
+    border-top: 1px dashed var(--border);
+  }
+
+  /* Animation d'apparition du bloc de lien */
+  .slide-down {
+    animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- SIGNATURE --- */
+  .app-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out 0.5s forwards;
+  }
+
+  .app-footer a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: color 0.2s, text-shadow 0.2s;
+  }
+
+  .app-footer a:hover {
+    color: var(--gold-hi);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  }
+
+  /* --- MODALE PERSONNALISÉE --- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    padding: 1rem;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-box {
+    background: linear-gradient(180deg, var(--card-hi), var(--card));
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-gold), inset 0 1px 0 rgba(255,255,255,0.05);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Effet ressort */
+  }
+
+  .modal-overlay.show .modal-box {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-title {
+    color: var(--warn);
+    font-size: 1.1rem;
+    margin: 0 0 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-content {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-actions button { flex: 1; margin: 0; }
+
+  @media (max-width: 480px) {
+    body { padding: 0.75rem; }
+    .card { padding: 1rem; border-radius: 10px; }
+    h1 { text-align: left; }
+    button { font-size: 15px; }
+  }
+
+  @media (min-width: 1024px) { body { padding: 3rem 2rem; } }
+
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Respect des préférences d'accessibilité */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .status { opacity: 1; transform: none; }
+    h1, .card, .app-footer { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>🔐 One link One secret</h1>
+
+  <div id="createPanel" class="card">
+    <h2>Créer un secret</h2>
+
+    <label class="label" for="plain">Secret</label>
+    <textarea id="plain" placeholder="Votre secret (mot de passe, clé PGP, etc.)…"></textarea>
+
+    <hr class="divider">
+
+    <label class="label" for="pass">Mot de passe de protection <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0;font-size:0.8rem">(optionnel)</span></label>
+    <input type="password" id="pass" placeholder="Mot de passe (facultatif)" autocomplete="new-password">
+
+    <label class="label" for="pass2">Confirmation</label>
+    <input type="password" id="pass2" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+
+    <small class="hint">
+      💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.
+      ⚠️ Toute personne possédant ce lien pourra alors lire le secret — le lien <em>devient</em> le secret.
+    </small>
+
+    <button id="btnCreate">
+      <span id="btnCreateText">Chiffrer et générer le lien</span>
+    </button>
+    <p class="status" id="createStatus"></p>
+
+    <div id="linkResult" class="hidden">
+      <p class="label">Lien à partager</p>
+      <pre id="linkOut"></pre>
+      <button class="alt" id="btnCopy">Copier le lien</button>
+    </div>
+  </div>
+
+  <div id="decryptPanel" class="card hidden">
+    <h2>Déchiffrer un secret</h2>
+    <p id="decryptIntro" style="margin-top:0;color:var(--text-dim);font-size:0.9rem">Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.</p>
+
+    <div id="pwdBlock">
+      <label class="label" for="dpass">Mot de passe</label>
+      <input type="password" id="dpass" placeholder="Mot de passe" autocomplete="off">
+    </div>
+
+    <button id="btnDecrypt">
+      <span id="btnDecryptText">Déchiffrer</span>
+    </button>
+    <pre id="dout"></pre>
+  </div>
+
+  <!-- SIGNATURE -->
+  <footer class="app-footer">
+    Développé par <a href="https://bstudio136.github.io/mylink/" target="_blank" rel="noopener noreferrer">Bstudio136</a>
+  </footer>
+</div>
+
+<!-- MODALE -->
+<div id="customModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 class="modal-title">⚠️ Aucun mot de passe saisi</h3>
+    <div class="modal-content">
+      Le lien généré contiendra la clé de déchiffrement.<br><br>
+      Toute personne qui possède ce lien pourra lire le secret.
+    </div>
+    <div class="modal-actions">
+      <button id="modalCancel" class="alt">Annuler</button>
+      <button id="modalConfirm">Continuer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ITERATIONS = 1000000;
+
+// --- HELPERS UI ---
+function setStatus(el, text, type = '') {
+  el.className = 'status ' + type; // Reset des classes
+  el.textContent = text;
+  // Force le navigateur à prendre en compte le changement
+  void el.offsetWidth; 
+  el.classList.add('show');
+}
+
+function setLoading(btn, loadingText, isLoading) {
+  const textSpan = btn.querySelector('span');
+  if (isLoading) {
+    btn.disabled = true;
+    btn.dataset.originalText = textSpan.textContent;
+    textSpan.innerHTML = `<span class="spinner"></span>${loadingText}`;
+  } else {
+    btn.disabled = false;
+    textSpan.textContent = btn.dataset.originalText || textSpan.textContent;
+  }
+}
+
+// --- MODALE ---
+function customConfirm() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('customModal');
+    const btnConfirm = document.getElementById('modalConfirm');
+    const btnCancel = document.getElementById('modalCancel');
+
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => modal.classList.add('show'));
+
+    const closeModal = (result) => {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        btnConfirm.onclick = null;
+        btnCancel.onclick = null;
+        resolve(result);
+      }, 300);
+    };
+
+    btnConfirm.onclick = () => closeModal(true);
+    btnCancel.onclick = () => closeModal(false);
+  });
+}
+
+// --- CRYPTO ---
+function b64(buf){const b=new Uint8Array(buf);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s);}
+function b64d(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+function b64url(s){return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function b64urld(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return s;}
+
+async function deriveKey(password, salt){
+  const enc=new TextEncoder();
+  const km=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt,iterations:ITERATIONS,hash:'SHA-256'},
+    km, {name:'AES-GCM',length:256}, false,['encrypt','decrypt']
+  );
+}
+
+async function encrypt(plaintext, password){
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  if (password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const key = await deriveKey(password, salt);
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(plaintext));
+    return {v:1, salt:b64(salt), iv:b64(iv), ct:b64(ct)};
+  }
+  const rawKey = crypto.getRandomValues(new Uint8Array(32));
+  const key = await crypto.subtle.importKey('raw', rawKey, {name:'AES-GCM'}, false, ['encrypt']);
+  const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(plaintext));
+  return {v:2, key:b64(rawKey), iv:b64(iv), ct:b64(ct)};
+}
+
+async function decrypt(payload, password){
+  let key;
+  if (payload.v === 2) {
+    key = await crypto.subtle.importKey('raw', b64d(payload.key), {name:'AES-GCM'}, false, ['decrypt']);
+  } else {
+    key = await deriveKey(password, b64d(payload.salt));
+  }
+  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(payload.iv)}, key, b64d(payload.ct));
+  return new TextDecoder().decode(pt);
+}
+
+function parseFragment(raw){
+  let b64part = null;
+  if (raw.startsWith('#p.')) b64part = raw.slice(3);
+  else if (raw.startsWith('#k.')) b64part = raw.slice(3);
+  else if (raw.startsWith('#v1.')) b64part = raw.slice(4);
+  if (b64part === null) return null;
+
+  try {
+    const payload = JSON.parse(new TextDecoder().decode(b64d(b64urld(b64part))));
+    return (payload && payload.ct) ? payload : null;
+  } catch(e) { return null; }
+}
+
+function showDecrypt(payload){
+  const createPanel = document.getElementById('createPanel');
+  const decryptPanel = document.getElementById('decryptPanel');
+  
+  createPanel.classList.add('hidden');
+  decryptPanel.classList.remove('hidden');
+  // Relancer l'animation d'entrée sur le panel
+  decryptPanel.style.animation = 'none';
+  decryptPanel.offsetHeight; // trigger reflow
+  decryptPanel.style.animation = 'fadeUp 0.6s ease-out forwards';
+
+  const pwdBlock = document.getElementById('pwdBlock');
+  const intro = document.getElementById('decryptIntro');
+  const btn = document.getElementById('btnDecrypt');
+  const btnText = document.getElementById('btnDecryptText');
+  const pwdInput = document.getElementById('dpass');
+  const out = document.getElementById('dout');
+
+  if (payload.v === 2) {
+    pwdBlock.classList.add('hidden');
+    intro.textContent = 'Ce secret est protégé par le lien uniquement (sans mot de passe). Cliquez pour le révéler.';
+    btnText.textContent = 'Révéler le secret';
+  } else {
+    intro.textContent = 'Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.';
+    btnText.textContent = 'Déchiffrer';
+  }
+
+  btn.onclick = async () => {
+    out.className = '';
+    out.textContent = '';
+    setLoading(btn, 'Patientez...', true);
+
+    try {
+      const pt = await decrypt(payload, pwdInput.value);
+      
+      out.textContent = pt;
+      out.classList.add('reveal-blur');
+      history.replaceState(null, '', location.pathname + location.search);
+    } catch(e) {
+      out.className = 'err';
+      out.textContent = payload.v === 2 ? '❌ Données corrompues.' : '❌ Mot de passe incorrect ou données corrompues.';
+    } finally {
+      setLoading(btn, '', false);
+    }
+  };
+}
+
+(function init(){
+  const payload = parseFragment(location.hash);
+  if (payload) { showDecrypt(payload); return; }
+
+  document.getElementById('btnCreate').onclick = async () => {
+    const btn = document.getElementById('btnCreate');
+    const plain = document.getElementById('plain').value;
+    const p1 = document.getElementById('pass').value;
+    const p2 = document.getElementById('pass2').value;
+    const st = document.getElementById('createStatus');
+
+    if (!plain) { setStatus(st, 'Le secret est vide.', 'err'); return; }
+    if (p1 !== p2) { setStatus(st, 'Les mots de passe ne correspondent pas.', 'err'); return; }
+
+    if (!p1) {
+      const ok = await customConfirm();
+      if (!ok) return;
+    }
+
+    setLoading(btn, 'Chiffrement...', true);
+    st.classList.remove('show');
+
+    try {
+      const payload = await encrypt(plain, p1);
+      const prefix = payload.v === 2 ? '#k.' : '#p.';
+      const fragment = prefix + b64url(b64(new TextEncoder().encode(JSON.stringify(payload))));
+      const link = location.href.split('#')[0] + fragment;
+
+      const linkResult = document.getElementById('linkResult');
+      document.getElementById('linkOut').textContent = link;
+      
+      linkResult.classList.remove('hidden');
+      linkResult.classList.remove('slide-down');
+      void linkResult.offsetWidth; 
+      linkResult.classList.add('slide-down');
+
+      if (payload.v === 2) {
+        setStatus(st, '⚠️ Lien généré sans mot de passe. Toute personne ayant ce lien peut lire le secret.', 'warn');
+      } else {
+        setStatus(st, '✅ Lien généré et protégé par mot de passe. Le secret reste dans le fragment (#), jamais envoyé à un serveur.', 'ok');
+      }
+    } catch(e) {
+      setStatus(st, 'Erreur : ' + e.message, 'err');
+    } finally {
+      setLoading(btn, '', false);
+    }
+  };
+
+  document.getElementById('btnCopy').onclick = () => {
+    const btn = document.getElementById('btnCopy');
+    const txt = document.getElementById('linkOut').textContent;
+    const st = document.getElementById('createStatus');
+
+    navigator.clipboard.writeText(txt).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copié !';
+      btn.style.color = 'var(--ok)';
+      btn.style.borderColor = 'var(--ok)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 2000);
+      setStatus(st, 'Lien copié dans le presse-papiers.', 'ok');
+    }).catch(() => {
+      setStatus(st, 'Copie impossible. Sélectionnez le lien manuellement.', 'err');
+    });
+  };
+})();
+</script>
+</body>
+</html>
