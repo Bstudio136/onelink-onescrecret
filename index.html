@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<!-- CSP : Autorise uniquement le code du fichier et les images en base64 -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'self'; form-action 'none';">
 <title>One link One secret</title>
 <style>
@@ -45,7 +44,6 @@
     position: relative;
   }
 
-  /* Halo doré animé en arrière-plan */
   body::before {
     content: '';
     position: fixed;
@@ -63,7 +61,6 @@
     100% { transform: scale(1.1); opacity: 1; }
   }
 
-  /* --- SÉLECTEUR DE LANGUE --- */
   .lang-switcher {
     position: absolute;
     top: 1rem;
@@ -85,12 +82,18 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    width: auto;
+    margin: 0;
+    min-height: 0;
+    box-shadow: none;
   }
 
   .lang-btn:hover {
     background: var(--card-hi);
     color: var(--text);
     border-color: var(--border-gold);
+    transform: none;
+    box-shadow: none;
   }
 
   .lang-btn.active {
@@ -99,6 +102,8 @@
     border-color: var(--gold);
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
   }
+
+  .lang-btn::after { display: none; }
 
   @media (min-width: 1024px) {
     .lang-switcher { top: 2rem; right: 2rem; }
@@ -235,6 +240,14 @@
 
   button.alt:hover { background: var(--gold-soft); border-color: var(--gold); }
 
+  .btn-small {
+    width: auto;
+    margin: 0.4rem 0 0;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    min-height: 36px;
+  }
+
   .spinner {
     display: inline-block;
     width: 16px;
@@ -272,6 +285,16 @@
   pre.reveal-blur {
     animation: revealSecret 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+
+  pre.masked {
+    color: var(--text-dim);
+    font-style: italic;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+  }
+
+  pre.masked:hover { color: var(--text); }
 
   @keyframes revealSecret {
     0% { filter: blur(8px); opacity: 0.3; transform: scale(0.98); }
@@ -323,6 +346,96 @@
     border-top: 1px dashed var(--border);
   }
 
+  /* --- FORCE DU MOT DE PASSE --- */
+  .pwd-strength {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .pwd-strength-bar {
+    flex: 1;
+    height: 5px;
+    background: var(--bg-soft);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .pwd-strength-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 3px;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+
+  .pwd-strength-fill.weak { background: var(--err); width: 25%; }
+  .pwd-strength-fill.fair { background: var(--warn); width: 55%; }
+  .pwd-strength-fill.strong { background: var(--ok); width: 100%; }
+
+  /* --- CASE "SANS MOT DE PASSE" --- */
+  .nopwd-toggle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-top: 1.1rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(251, 191, 36, 0.05);
+    border: 1px solid rgba(251, 191, 36, 0.18);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    transition: background 0.2s, border-color 0.2s;
+    line-height: 1.4;
+  }
+
+  .nopwd-toggle:hover {
+    background: rgba(251, 191, 36, 0.09);
+    border-color: rgba(251, 191, 36, 0.32);
+  }
+
+  .nopwd-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 2px 0 0;
+    padding: 0;
+    accent-color: var(--warn);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .nopwd-toggle-text strong { color: var(--text); font-weight: 600; }
+  .nopwd-toggle-text small { display: block; margin-top: 0.2rem; font-size: 0.82rem; }
+
+  .nopwd-warning {
+    margin-top: 0.7rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 8px;
+    color: var(--err);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .security-note {
+    margin-top: 1rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+
+  .security-note strong { color: var(--text); font-weight: 600; }
+
   .slide-down {
     animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
@@ -332,7 +445,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- SIGNATURE --- */
   .app-footer {
     margin-top: auto;
     padding-top: 2rem;
@@ -356,68 +468,6 @@
     color: var(--gold-hi);
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
   }
-
-  /* --- MODALE PERSONNALISÉE --- */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    padding: 1rem;
-  }
-
-  .modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal-box {
-    background: linear-gradient(180deg, var(--card-hi), var(--card));
-    border: 1px solid var(--border-gold);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-gold), inset 0 1px 0 rgba(255,255,255,0.05);
-    transform: scale(0.9) translateY(20px);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .modal-overlay.show .modal-box {
-    transform: scale(1) translateY(0);
-  }
-
-  .modal-title {
-    color: var(--warn);
-    font-size: 1.1rem;
-    margin: 0 0 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .modal-content {
-    font-size: 0.95rem;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-  }
-
-  .modal-actions button { flex: 1; margin: 0; }
 
   @media (max-width: 480px) {
     body { padding: 0.75rem; }
@@ -450,7 +500,6 @@
 </head>
 <body>
 
-<!-- SÉLECTEUR DE LANGUE -->
 <div class="lang-switcher">
   <button class="lang-btn" data-lang="fr" aria-label="Français">FR</button>
   <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
@@ -468,16 +517,38 @@
 
     <hr class="divider">
 
-    <label class="label" for="pass" data-i18n="label_pwd_opt">Mot de passe de protection (optionnel)</label>
-    <input type="password" id="pass" data-i18n-placeholder="placeholder_pwd_opt" placeholder="Mot de passe (facultatif)" autocomplete="new-password">
+    <div id="pwdFields">
+      <label class="label" for="pass" data-i18n="label_pwd">Mot de passe de protection</label>
+      <input type="password" id="pass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe (obligatoire)" autocomplete="new-password">
 
-    <label class="label" for="pass2" data-i18n="label_confirm">Confirmation</label>
-    <input type="password" id="pass2" data-i18n-placeholder="placeholder_confirm" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+      <div class="pwd-strength">
+        <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwdStrengthFill"></div></div>
+        <span id="pwdStrengthText" data-i18n="pwd_strength_empty">—</span>
+      </div>
 
-    <small class="hint" id="hint_text" data-i18n-html="hint_text">
-      💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.<br><br>
-      ⚠️ Toute personne possédant ce lien pourra alors lire le secret — le lien <em>devient</em> le secret.
+      <button type="button" class="alt btn-small" id="btnGenPwd" data-i18n="btn_gen_pwd">
+        🎲 Générer un mot de passe fort
+      </button>
+
+      <label class="label" for="pass2" data-i18n="label_confirm">Confirmation</label>
+      <input type="password" id="pass2" data-i18n-placeholder="placeholder_confirm" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+    </div>
+
+    <small class="hint" data-i18n-html="hint_text">
+      💡 Un mot de passe fort protège le secret <strong>même si le lien fuite</strong>.
     </small>
+
+    <label class="nopwd-toggle" for="nopwdToggle">
+      <input type="checkbox" id="nopwdToggle">
+      <span class="nopwd-toggle-text">
+        <strong data-i18n="nopwd_label">Générer sans mot de passe (déconseillé)</strong>
+        <small data-i18n="nopwd_sub">Le lien lui-même devient le secret — quiconque l'a peut le lire.</small>
+      </span>
+    </label>
+
+    <div id="nopwdWarning" class="nopwd-warning hidden" data-i18n="nopwd_warn">
+      ⚠️ Attention : ce lien EST le secret. Une fois partagé, il est impossible à révoquer.
+    </div>
 
     <button id="btnCreate">
       <span id="btnCreateText" data-i18n="btn_create">Chiffrer et générer le lien</span>
@@ -488,6 +559,9 @@
       <p class="label" data-i18n="link_to_share">Lien à partager</p>
       <pre id="linkOut"></pre>
       <button class="alt" id="btnCopy" data-i18n="btn_copy">Copier le lien</button>
+      <div class="security-note" data-i18n-html="share_note">
+        🔑 <strong>Important :</strong> transmettez le mot de passe par un <em>autre canal</em> que le lien (Signal, en personne, etc.). Le lien seul ne suffit pas à lire le secret.
+      </div>
     </div>
   </div>
 
@@ -504,27 +578,15 @@
       <span id="btnDecryptText" data-i18n="btn_decrypt">Déchiffrer</span>
     </button>
     <pre id="dout"></pre>
+
+    <div class="security-note" data-i18n-html="bruteforce_note">
+      🛡️ <strong>Protection :</strong> après 5 tentatives échouées, l'accès à ce lien depuis ce navigateur est temporairement verrouillé. Cette protection est <em>locale</em> — elle ne peut pas empêcher une attaque qui se ferait hors du site.
+    </div>
   </div>
 
-  <!-- SIGNATURE -->
-  <footer class="app-footer" id="footer_text" data-i18n-html="footer_text">
+  <footer class="app-footer" data-i18n-html="footer_text">
     Développé par <a href="https://bstudio136.github.io/mylink/" target="_blank" rel="noopener noreferrer">Bstudio136</a>
   </footer>
-</div>
-
-<!-- MODALE -->
-<div id="customModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <h3 class="modal-title" data-i18n="modal_title">⚠️ Aucun mot de passe saisi</h3>
-    <div class="modal-content" id="modal_content" data-i18n-html="modal_desc">
-      Le lien généré contiendra la clé de déchiffrement.<br><br>
-      Toute personne qui possède ce lien pourra lire le secret.
-    </div>
-    <div class="modal-actions">
-      <button id="modalCancel" class="alt" data-i18n="btn_cancel">Annuler</button>
-      <button id="modalConfirm" data-i18n="btn_continue">Continuer</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -535,135 +597,172 @@ const translations = {
     create_title: "Créer un secret",
     label_secret: "Secret",
     placeholder_secret: "Votre secret (mot de passe, clé PGP, etc.)…",
-    label_pwd_opt: "Mot de passe de protection (optionnel)",
-    placeholder_pwd_opt: "Mot de passe (facultatif)",
+    label_pwd: "Mot de passe de protection",
+    placeholder_pwd: "Mot de passe (obligatoire)",
     label_confirm: "Confirmation",
     placeholder_confirm: "Confirmer le mot de passe",
-    hint_text: "💡 <strong>Laissez les deux champs vides</strong> pour générer un lien sans mot de passe.<br><br>⚠️ Toute personne possédant ce lien pourra alors lire le secret — le lien <em>devient</em> le secret.",
+    hint_text: "💡 Un mot de passe fort protège le secret <strong>même si le lien fuite</strong>.",
+    btn_gen_pwd: "🎲 Générer un mot de passe fort",
+    pwd_strength_empty: "—",
+    pwd_strength_weak: "Faible",
+    pwd_strength_fair: "Moyen",
+    pwd_strength_strong: "Fort",
+    pwd_strength_short: "Trop court (min. 12 caractères)",
+    nopwd_label: "Générer sans mot de passe (déconseillé)",
+    nopwd_sub: "Le lien lui-même devient le secret — quiconque l'a peut le lire.",
+    nopwd_warn: "⚠️ Attention : ce lien EST le secret. Une fois partagé, il est impossible à révoquer.",
     btn_create: "Chiffrer et générer le lien",
     link_to_share: "Lien à partager",
     btn_copy: "Copier le lien",
+    share_note: "🔑 <strong>Important :</strong> transmettez le mot de passe par un <em>autre canal</em> que le lien (Signal, en personne, etc.). Le lien seul ne suffit pas à lire le secret.",
+    bruteforce_note: "🛡️ <strong>Protection :</strong> après 5 tentatives échouées, l'accès à ce lien depuis ce navigateur est temporairement verrouillé. Cette protection est <em>locale</em> — elle ne peut pas empêcher une attaque qui se ferait hors du site.",
     decrypt_title: "Déchiffrer un secret",
     decrypt_intro_pwd: "Un secret chiffré est présent dans le lien. Entrez le mot de passe pour le révéler.",
     decrypt_intro_nopwd: "Ce secret est protégé par le lien uniquement (sans mot de passe). Cliquez pour le révéler.",
-    label_pwd: "Mot de passe",
-    placeholder_pwd: "Mot de passe",
     btn_decrypt: "Déchiffrer",
     btn_reveal: "Révéler le secret",
     footer_text: "Développé par <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
-    modal_title: "⚠️ Aucun mot de passe saisi",
-    modal_desc: "Le lien généré contiendra la clé de déchiffrement.<br><br>Toute personne qui possède ce lien pourra lire le secret.",
-    btn_cancel: "Annuler",
-    btn_continue: "Continuer",
     err_empty_secret: "Le secret est vide.",
+    err_pwd_required: "Le mot de passe est requis. Cochez la case ci-dessous pour générer un lien sans mot de passe.",
     err_pwd_mismatch: "Les mots de passe ne correspondent pas.",
-    loading_encrypt_pwd: "Chiffrement en cours... (1 000 000 itérations PBKDF2)",
+    err_pwd_too_short: "Le mot de passe doit contenir au moins 12 caractères.",
+    loading_encrypt_pwd: "Chiffrement en cours... (2 000 000 itérations PBKDF2)",
     loading_encrypt_nopwd: "Chiffrement en cours... (clé aléatoire 256 bits)",
     warn_no_pwd: "⚠️ Lien généré sans mot de passe. Toute personne ayant ce lien peut lire le secret.",
     ok_pwd: "✅ Lien généré et protégé par mot de passe. Le secret reste dans le fragment (#), jamais envoyé à un serveur.",
     err_prefix: "Erreur : ",
     copied: "✅ Copié !",
-    copy_success: "Lien copié dans le presse-papiers.",
+    copy_success: "Lien copié. Vidage automatique du presse-papiers dans 30 s.",
     copy_fail: "Copie impossible. Sélectionnez le lien manuellement.",
     loading_decrypt: "Patientez...",
     err_decrypt_pwd: "❌ Mot de passe incorrect ou données corrompues.",
-    err_decrypt_nopwd: "❌ Données corrompues."
+    err_decrypt_nopwd: "❌ Données corrompues.",
+    err_rate_limited: "🚫 Trop de tentatives. Réessayez dans {time}.",
+    warn_rate_limit_soon: "⚠️ Tentative {n} sur 5 avant verrouillage temporaire.",
+    secret_masked: "••••••••  Secret masqué après 45 s — cliquez pour réafficher.",
+    gen_pwd_filled: "✅ Mot de passe généré. Copiez-le pour le transmettre séparément du lien."
   },
   en: {
     app_title: "🔐 One link One secret",
     create_title: "Create a secret",
     label_secret: "Secret",
     placeholder_secret: "Your secret (password, PGP key, etc.)…",
-    label_pwd_opt: "Password protection (optional)",
-    placeholder_pwd_opt: "Password (optional)",
+    label_pwd: "Password protection",
+    placeholder_pwd: "Password (required)",
     label_confirm: "Confirmation",
     placeholder_confirm: "Confirm password",
-    hint_text: "💡 <strong>Leave both fields empty</strong> to generate a password-less link.<br><br>⚠️ Anyone with this link will be able to read the secret — the link <em>becomes</em> the secret.",
+    hint_text: "💡 A strong password protects the secret <strong>even if the link leaks</strong>.",
+    btn_gen_pwd: "🎲 Generate strong password",
+    pwd_strength_empty: "—",
+    pwd_strength_weak: "Weak",
+    pwd_strength_fair: "Fair",
+    pwd_strength_strong: "Strong",
+    pwd_strength_short: "Too short (min. 12 characters)",
+    nopwd_label: "Generate without password (not recommended)",
+    nopwd_sub: "The link itself becomes the secret — anyone with it can read it.",
+    nopwd_warn: "⚠️ Warning: this link IS the secret. Once shared, it cannot be revoked.",
     btn_create: "Encrypt and generate link",
     link_to_share: "Link to share",
     btn_copy: "Copy link",
+    share_note: "🔑 <strong>Important:</strong> send the password through a <em>different channel</em> than the link (Signal, in person, etc.). The link alone cannot reveal the secret.",
+    bruteforce_note: "🛡️ <strong>Protection:</strong> after 5 failed attempts, access to this link from this browser is temporarily locked. This protection is <em>local</em> — it cannot stop attacks performed outside the site.",
     decrypt_title: "Decrypt a secret",
     decrypt_intro_pwd: "An encrypted secret is present in the link. Enter the password to reveal it.",
     decrypt_intro_nopwd: "This secret is protected by the link only (no password). Click to reveal it.",
-    label_pwd: "Password",
-    placeholder_pwd: "Password",
     btn_decrypt: "Decrypt",
     btn_reveal: "Reveal secret",
     footer_text: "Developed by <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
-    modal_title: "⚠️ No password entered",
-    modal_desc: "The generated link will contain the decryption key.<br><br>Anyone who has this link can read the secret.",
-    btn_cancel: "Cancel",
-    btn_continue: "Continue",
     err_empty_secret: "The secret is empty.",
+    err_pwd_required: "Password is required. Check the box below to generate a password-less link.",
     err_pwd_mismatch: "Passwords do not match.",
-    loading_encrypt_pwd: "Encrypting... (1,000,000 PBKDF2 iterations)",
+    err_pwd_too_short: "Password must be at least 12 characters.",
+    loading_encrypt_pwd: "Encrypting... (2,000,000 PBKDF2 iterations)",
     loading_encrypt_nopwd: "Encrypting... (random 256-bit key)",
     warn_no_pwd: "⚠️ Link generated without password. Anyone with this link can read the secret.",
     ok_pwd: "✅ Link generated and protected by password. The secret remains in the fragment (#), never sent to a server.",
     err_prefix: "Error: ",
     copied: "✅ Copied!",
-    copy_success: "Link copied to clipboard.",
+    copy_success: "Link copied. Clipboard will be cleared in 30 s.",
     copy_fail: "Copy failed. Select the link manually.",
     loading_decrypt: "Please wait...",
     err_decrypt_pwd: "❌ Incorrect password or corrupted data.",
-    err_decrypt_nopwd: "❌ Corrupted data."
+    err_decrypt_nopwd: "❌ Corrupted data.",
+    err_rate_limited: "🚫 Too many attempts. Try again in {time}.",
+    warn_rate_limit_soon: "⚠️ Attempt {n} of 5 before temporary lockout.",
+    secret_masked: "••••••••  Secret hidden after 45 s — click to reveal.",
+    gen_pwd_filled: "✅ Password generated. Copy it to send separately from the link."
   },
   it: {
     app_title: "🔐 One link One secret",
     create_title: "Crea un segreto",
     label_secret: "Segreto",
     placeholder_secret: "Il tuo segreto (password, chiave PGP, ecc.)…",
-    label_pwd_opt: "Protezione con password (opzionale)",
-    placeholder_pwd_opt: "Password (opzionale)",
+    label_pwd: "Protezione con password",
+    placeholder_pwd: "Password (obbligatoria)",
     label_confirm: "Conferma",
     placeholder_confirm: "Conferma la password",
-    hint_text: "💡 <strong>Lascia entrambi i campi vuoti</strong> per generare un link senza password.<br><br>⚠️ Chiunque possieda questo link potrà leggere il segreto — il link <em>diventa</em> il segreto.",
+    hint_text: "💡 Una password forte protegge il segreto <strong>anche se il link trapela</strong>.",
+    btn_gen_pwd: "🎲 Genera password forte",
+    pwd_strength_empty: "—",
+    pwd_strength_weak: "Debole",
+    pwd_strength_fair: "Media",
+    pwd_strength_strong: "Forte",
+    pwd_strength_short: "Troppo corta (min. 12 caratteri)",
+    nopwd_label: "Genera senza password (sconsigliato)",
+    nopwd_sub: "Il link stesso diventa il segreto — chiunque lo abbia può leggerlo.",
+    nopwd_warn: "⚠️ Attenzione: questo link È il segreto. Una volta condiviso, non può essere revocato.",
     btn_create: "Crittografa e genera link",
     link_to_share: "Link da condividere",
     btn_copy: "Copia link",
+    share_note: "🔑 <strong>Importante:</strong> invia la password tramite un <em>canale diverso</em> dal link (Signal, di persona, ecc.). Il solo link non basta a leggere il segreto.",
+    bruteforce_note: "🛡️ <strong>Protezione:</strong> dopo 5 tentativi falliti, l'accesso a questo link da questo browser viene temporaneamente bloccato. Questa protezione è <em>locale</em> — non può fermare attacchi effettuati fuori dal sito.",
     decrypt_title: "Decifra un segreto",
     decrypt_intro_pwd: "Un segreto crittografato è presente nel link. Inserisci la password per rivelarlo.",
     decrypt_intro_nopwd: "Questo segreto è protetto solo dal link (nessuna password). Clicca per rivelarlo.",
-    label_pwd: "Password",
-    placeholder_pwd: "Password",
     btn_decrypt: "Decifra",
     btn_reveal: "Rivela segreto",
     footer_text: "Sviluppato da <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
-    modal_title: "⚠️ Nessuna password inserita",
-    modal_desc: "Il link generato conterrà la chiave di decrittazione.<br><br>Chiunque abbia questo link può leggere il segreto.",
-    btn_cancel: "Annulla",
-    btn_continue: "Continua",
     err_empty_secret: "Il segreto è vuoto.",
+    err_pwd_required: "La password è obbligatoria. Spunta la casella sotto per generare un link senza password.",
     err_pwd_mismatch: "Le password non corrispondono.",
-    loading_encrypt_pwd: "Crittografia in corso... (1.000.000 iterazioni PBKDF2)",
+    err_pwd_too_short: "La password deve contenere almeno 12 caratteri.",
+    loading_encrypt_pwd: "Crittografia in corso... (2.000.000 iterazioni PBKDF2)",
     loading_encrypt_nopwd: "Crittografia in corso... (chiave casuale a 256 bit)",
     warn_no_pwd: "⚠️ Link generato senza password. Chiunque abbia questo link può leggere il segreto.",
     ok_pwd: "✅ Link generato e protetto da password. Il segreto rimane nel frammento (#), mai inviato a un server.",
     err_prefix: "Errore: ",
     copied: "✅ Copiato!",
-    copy_success: "Link copiato negli appunti.",
+    copy_success: "Link copiato. Gli appunti verranno svuotati tra 30 s.",
     copy_fail: "Copia non riuscita. Seleziona il link manualmente.",
     loading_decrypt: "Attendere prego...",
     err_decrypt_pwd: "❌ Password errata o dati corrotti.",
-    err_decrypt_nopwd: "❌ Dati corrotti."
+    err_decrypt_nopwd: "❌ Dati corrotti.",
+    err_rate_limited: "🚫 Troppi tentativi. Riprova tra {time}.",
+    warn_rate_limit_soon: "⚠️ Tentativo {n} di 5 prima del blocco temporaneo.",
+    secret_masked: "••••••••  Segreto nascosto dopo 45 s — clicca per rivelare.",
+    gen_pwd_filled: "✅ Password generata. Copiala per inviarla separatamente dal link."
   }
 };
 
 let currentLang = 'fr';
 
-function t(key) {
-  return translations[currentLang][key] || key;
+function t(key, vars) {
+  let s = translations[currentLang][key] || key;
+  if (vars) {
+    for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
+  }
+  return s;
 }
 
 function setLanguage(lang) {
   if (!translations[lang]) return;
   currentLang = lang;
-  localStorage.setItem('app_lang', lang);
-  
+  try { localStorage.setItem('app_lang', lang); } catch(e) {}
+
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
   });
-  
+
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
   });
@@ -676,10 +775,7 @@ function setLanguage(lang) {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 
-  if (!document.getElementById('customModal').classList.contains('hidden')) {
-    document.getElementById('modalConfirm').textContent = t('btn_continue');
-    document.getElementById('modalCancel').textContent = t('btn_cancel');
-  }
+  updatePwdStrength();
 }
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -688,9 +784,9 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 // --- HELPERS UI ---
 function setStatus(el, text, type = '') {
-  el.className = 'status ' + type; 
+  el.className = 'status ' + type;
   el.textContent = text;
-  void el.offsetWidth; 
+  void el.offsetWidth;
   el.classList.add('show');
 }
 
@@ -706,29 +802,126 @@ function setLoading(btn, loadingText, isLoading) {
   }
 }
 
-// --- MODALE ---
-function customConfirm() {
-  return new Promise((resolve) => {
-    const modal = document.getElementById('customModal');
-    const btnConfirm = document.getElementById('modalConfirm');
-    const btnCancel = document.getElementById('modalCancel');
+// --- GÉNÉRATEUR DE MOT DE PASSE ---
+function randomInt(max) {
+  const arr = new Uint32Array(1);
+  const limit = Math.floor(0xFFFFFFFF / max) * max;
+  let val;
+  do { crypto.getRandomValues(arr); val = arr[0]; } while (val >= limit);
+  return val % max;
+}
 
-    modal.classList.remove('hidden');
-    requestAnimationFrame(() => modal.classList.add('show'));
+function generateStrongPassword(length = 20) {
+  const lower = 'abcdefghjkmnpqrstuvwxyz';
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const digits = '23456789';
+  const symbols = '!@#$%&*+-=?';
+  const all = lower + upper + digits + symbols;
 
-    const closeModal = (result) => {
-      modal.classList.remove('show');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        btnConfirm.onclick = null;
-        btnCancel.onclick = null;
-        resolve(result);
-      }, 300);
-    };
+  const required = [
+    lower[randomInt(lower.length)],
+    upper[randomInt(upper.length)],
+    digits[randomInt(digits.length)],
+    symbols[randomInt(symbols.length)]
+  ];
 
-    btnConfirm.onclick = () => closeModal(true);
-    btnCancel.onclick = () => closeModal(false);
-  });
+  const chars = [];
+  for (let i = 0; i < length - required.length; i++) {
+    chars.push(all[randomInt(all.length)]);
+  }
+  const result = required.concat(chars);
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result.join('');
+}
+
+// --- INDICATEUR DE FORCE ---
+function estimateStrength(pwd) {
+  if (!pwd) return 'empty';
+  if (pwd.length < 12) return 'short';
+  let classes = 0;
+  if (/[a-z]/.test(pwd)) classes++;
+  if (/[A-Z]/.test(pwd)) classes++;
+  if (/[0-9]/.test(pwd)) classes++;
+  if (/[^a-zA-Z0-9]/.test(pwd)) classes++;
+
+  if (pwd.length >= 16 && classes >= 3) return 'strong';
+  if (pwd.length >= 12 && classes >= 2) return 'fair';
+  return 'weak';
+}
+
+function updatePwdStrength() {
+  const pwd = document.getElementById('pass').value;
+  const fill = document.getElementById('pwdStrengthFill');
+  const text = document.getElementById('pwdStrengthText');
+  if (!fill || !text) return;
+
+  const level = estimateStrength(pwd);
+  fill.className = 'pwd-strength-fill';
+  if (level === 'empty') { text.textContent = t('pwd_strength_empty'); return; }
+  if (level === 'short') { fill.classList.add('weak'); text.textContent = t('pwd_strength_short'); return; }
+  if (level === 'weak') { fill.classList.add('weak'); text.textContent = t('pwd_strength_weak'); return; }
+  if (level === 'fair') { fill.classList.add('fair'); text.textContent = t('pwd_strength_fair'); return; }
+  if (level === 'strong') { fill.classList.add('strong'); text.textContent = t('pwd_strength_strong'); }
+}
+
+// --- RATE LIMITING PERSISTANT ---
+// NOTE : défense en profondeur uniquement. Un attaquant peut vider localStorage
+// ou exécuter son propre code de déchiffrement hors site. Empêche seulement les
+// tentatives naïves via ce site. La vraie protection reste la force du mot de passe.
+
+const RL_PREFIX = 'rl_';
+const RL_MAX_BEFORE_LOCK = 5;
+const RL_LOCK_5MIN = 5 * 60 * 1000;
+const RL_LOCK_24H = 24 * 60 * 60 * 1000;
+
+function rlKey(payload) {
+  return RL_PREFIX + payload.ct.slice(0, 24);
+}
+
+function rlGet(payload) {
+  try {
+    const raw = localStorage.getItem(rlKey(payload));
+    return raw ? JSON.parse(raw) : { attempts: 0, lockedUntil: 0 };
+  } catch(e) { return { attempts: 0, lockedUntil: 0 }; }
+}
+
+function rlSet(payload, state) {
+  try { localStorage.setItem(rlKey(payload), JSON.stringify(state)); } catch(e) {}
+}
+
+function rlCheck(payload) {
+  const state = rlGet(payload);
+  const now = Date.now();
+  if (state.lockedUntil && state.lockedUntil > now) {
+    return { locked: true, remainingMs: state.lockedUntil - now, attempts: state.attempts };
+  }
+  return { locked: false, remainingMs: 0, attempts: state.attempts };
+}
+
+function rlRecordFailure(payload) {
+  const state = rlGet(payload);
+  state.attempts = (state.attempts || 0) + 1;
+  const now = Date.now();
+  if (state.attempts >= 10) state.lockedUntil = now + RL_LOCK_24H;
+  else if (state.attempts >= RL_MAX_BEFORE_LOCK) state.lockedUntil = now + RL_LOCK_5MIN;
+  rlSet(payload, state);
+  return state;
+}
+
+function rlClear(payload) {
+  try { localStorage.removeItem(rlKey(payload)); } catch(e) {}
+}
+
+function formatRemaining(ms) {
+  const s = Math.ceil(ms / 1000);
+  if (s < 60) return s + 's';
+  const m = Math.ceil(s / 60);
+  if (m < 60) return m + ' min';
+  const h = Math.ceil(m / 60);
+  return h + ' h';
 }
 
 // --- CRYPTO ---
@@ -737,11 +930,13 @@ function b64d(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=
 function b64url(s){return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function b64urld(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return s;}
 
+const PBKDF2_ITERATIONS = 2000000;
+
 async function deriveKey(password, salt){
   const enc=new TextEncoder();
   const km=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);
   return crypto.subtle.deriveKey(
-    {name:'PBKDF2',salt,iterations:1000000,hash:'SHA-256'},
+    {name:'PBKDF2',salt,iterations:PBKDF2_ITERATIONS,hash:'SHA-256'},
     km, {name:'AES-GCM',length:256}, false,['encrypt','decrypt']
   );
 }
@@ -784,14 +979,86 @@ function parseFragment(raw){
   } catch(e) { return null; }
 }
 
+// --- MASQUAGE AUTO DU SECRET RÉVÉLÉ ---
+let autoMaskTimer = null;
+let autoMaskOriginal = '';
+const AUTO_MASK_MS = 45000;
+
+function scheduleMask(preEl) {
+  clearTimeout(autoMaskTimer);
+  autoMaskTimer = setTimeout(() => {
+    preEl.textContent = t('secret_masked');
+    preEl.classList.add('masked');
+    preEl.onclick = () => {
+      preEl.textContent = autoMaskOriginal;
+      preEl.classList.remove('masked');
+      preEl.onclick = null;
+      scheduleMask(preEl);
+    };
+  }, AUTO_MASK_MS);
+}
+
+function revealWithAutoMask(preEl, text) {
+  clearTimeout(autoMaskTimer);
+  autoMaskOriginal = text;
+  preEl.className = '';
+  preEl.onclick = null;
+  preEl.textContent = text;
+  void preEl.offsetWidth;
+  preEl.classList.add('reveal-blur');
+  scheduleMask(preEl);
+}
+
+// --- VIDAGE AUTO DU PRESSE-PAPIERS ---
+let clipboardTimer = null;
+
+function scheduleClipboardWipe(originalText) {
+  clearTimeout(clipboardTimer);
+  clipboardTimer = setTimeout(async () => {
+    try {
+      const cur = await navigator.clipboard.readText();
+      if (cur === originalText) await navigator.clipboard.writeText('');
+    } catch(e) {}
+  }, 30000);
+}
+
+// --- NETTOYAGE BFCACHE ---
+function wipeSensitiveDom() {
+  try {
+    ['plain', 'pass', 'pass2', 'dpass'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    ['dout', 'linkOut'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = ''; el.className = ''; }
+    });
+    const lr = document.getElementById('linkResult');
+    if (lr) lr.classList.add('hidden');
+    const cs = document.getElementById('createStatus');
+    if (cs) { cs.className = 'status'; cs.textContent = ''; }
+    clearTimeout(autoMaskTimer);
+    clearTimeout(clipboardTimer);
+    updatePwdStrength();
+  } catch(e) {}
+}
+
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    wipeSensitiveDom();
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(e) {}
+  }
+});
+
+// --- PANNEAU DÉCHIFFREMENT ---
 function showDecrypt(payload){
   const createPanel = document.getElementById('createPanel');
   const decryptPanel = document.getElementById('decryptPanel');
-  
+
   createPanel.classList.add('hidden');
   decryptPanel.classList.remove('hidden');
   decryptPanel.style.animation = 'none';
-  decryptPanel.offsetHeight; 
+  decryptPanel.offsetHeight;
   decryptPanel.style.animation = 'fadeUp 0.6s ease-out forwards';
 
   const pwdBlock = document.getElementById('pwdBlock');
@@ -812,64 +1079,149 @@ function showDecrypt(payload){
     btnText.setAttribute('data-i18n', 'btn_decrypt');
   }
 
+  // Vérifier un éventuel verrouillage résiduel dès l'affichage
+  if (payload.v !== 2) {
+    const rl = rlCheck(payload);
+    if (rl.locked) {
+      btn.disabled = true;
+      setStatus(out, t('err_rate_limited', { time: formatRemaining(rl.remainingMs) }), 'err');
+      out.className = 'err';
+      out.textContent = t('err_rate_limited', { time: formatRemaining(rl.remainingMs) });
+      const tick = setInterval(() => {
+        const state = rlCheck(payload);
+        if (!state.locked) {
+          clearInterval(tick);
+          btn.disabled = false;
+          out.className = '';
+          out.textContent = '';
+        } else {
+          out.textContent = t('err_rate_limited', { time: formatRemaining(state.remainingMs) });
+        }
+      }, 1000);
+    }
+  }
+
   btn.onclick = async () => {
+    // 1) Vérifier le rate limit AVANT de tenter
+    if (payload.v !== 2) {
+      const rl = rlCheck(payload);
+      if (rl.locked) {
+        out.className = 'err';
+        out.textContent = t('err_rate_limited', { time: formatRemaining(rl.remainingMs) });
+        return;
+      }
+    }
+
     out.className = '';
     out.textContent = '';
     setLoading(btn, t('loading_decrypt'), true);
 
     try {
       const pt = await decrypt(payload, pwdInput.value);
-      
-      out.textContent = pt;
-      out.classList.add('reveal-blur');
+      // Succès : on efface le compteur d'échecs pour ce lien
+      if (payload.v !== 2) rlClear(payload);
+      revealWithAutoMask(out, pt);
+      pwdInput.value = '';
       history.replaceState(null, '', location.pathname + location.search);
     } catch(e) {
-      out.className = 'err';
-      out.textContent = payload.v === 2 ? t('err_decrypt_nopwd') : t('err_decrypt_pwd');
+      if (payload.v !== 2) {
+        const state = rlRecordFailure(payload);
+        if (state.lockedUntil && state.lockedUntil > Date.now()) {
+          out.className = 'err';
+          out.textContent = t('err_rate_limited', { time: formatRemaining(state.lockedUntil - Date.now()) });
+        } else {
+          out.className = 'err';
+          const remaining = RL_MAX_BEFORE_LOCK - state.attempts;
+          out.textContent = t('err_decrypt_pwd') + '\n' + t('warn_rate_limit_soon', { n: state.attempts });
+        }
+      } else {
+        out.className = 'err';
+        out.textContent = t('err_decrypt_nopwd');
+      }
     } finally {
       setLoading(btn, '', false);
     }
   };
 }
 
+// --- INIT ---
 (function init(){
-  const savedLang = localStorage.getItem('app_lang') || 'fr';
+  let savedLang = 'fr';
+  try { savedLang = localStorage.getItem('app_lang') || 'fr'; } catch(e) {}
   setLanguage(savedLang);
 
   const payload = parseFragment(location.hash);
   if (payload) { showDecrypt(payload); return; }
 
+  const nopwdToggle = document.getElementById('nopwdToggle');
+  const nopwdWarning = document.getElementById('nopwdWarning');
+  const pwdFields = document.getElementById('pwdFields');
+  const passInput = document.getElementById('pass');
+
+  nopwdToggle.addEventListener('change', () => {
+    if (nopwdToggle.checked) {
+      pwdFields.classList.add('hidden');
+      nopwdWarning.classList.remove('hidden');
+      passInput.value = '';
+      document.getElementById('pass2').value = '';
+    } else {
+      pwdFields.classList.remove('hidden');
+      nopwdWarning.classList.add('hidden');
+    }
+  });
+
+  // Indicateur de force en temps réel
+  passInput.addEventListener('input', updatePwdStrength);
+  updatePwdStrength();
+
+  // Générateur de mot de passe
+  document.getElementById('btnGenPwd').addEventListener('click', () => {
+    const pwd = generateStrongPassword(20);
+    passInput.value = pwd;
+    document.getElementById('pass2').value = pwd;
+    passInput.type = 'text'; // montrer brièvement
+    updatePwdStrength();
+    setStatus(document.getElementById('createStatus'), t('gen_pwd_filled'), 'ok');
+    setTimeout(() => { passInput.type = 'password'; }, 4000);
+  });
+
+  // Création
   document.getElementById('btnCreate').onclick = async () => {
     const btn = document.getElementById('btnCreate');
     const plain = document.getElementById('plain').value;
-    const p1 = document.getElementById('pass').value;
+    const p1 = passInput.value;
     const p2 = document.getElementById('pass2').value;
+    const noPwd = nopwdToggle.checked;
     const st = document.getElementById('createStatus');
 
     if (!plain) { setStatus(st, t('err_empty_secret'), 'err'); return; }
-    if (p1 !== p2) { setStatus(st, t('err_pwd_mismatch'), 'err'); return; }
 
-    if (!p1) {
-      const ok = await customConfirm();
-      if (!ok) return;
+    if (!noPwd) {
+      if (!p1) { setStatus(st, t('err_pwd_required'), 'err'); return; }
+      if (p1.length < 12) { setStatus(st, t('err_pwd_too_short'), 'err'); return; }
+      if (p1 !== p2) { setStatus(st, t('err_pwd_mismatch'), 'err'); return; }
     }
 
-    setLoading(btn, p1 ? t('loading_encrypt_pwd') : t('loading_encrypt_nopwd'), true);
+    setLoading(btn, noPwd ? t('loading_encrypt_nopwd') : t('loading_encrypt_pwd'), true);
     st.classList.remove('show');
 
     try {
-      const payload = await encrypt(plain, p1);
+      const payload = await encrypt(plain, noPwd ? '' : p1);
       const prefix = payload.v === 2 ? '#k.' : '#p.';
       const fragment = prefix + b64url(b64(new TextEncoder().encode(JSON.stringify(payload))));
       const link = location.href.split('#')[0] + fragment;
 
       const linkResult = document.getElementById('linkResult');
       document.getElementById('linkOut').textContent = link;
-      
+
       linkResult.classList.remove('hidden');
       linkResult.classList.remove('slide-down');
-      void linkResult.offsetWidth; 
+      void linkResult.offsetWidth;
       linkResult.classList.add('slide-down');
+
+      passInput.value = '';
+      document.getElementById('pass2').value = '';
+      updatePwdStrength();
 
       if (payload.v === 2) {
         setStatus(st, t('warn_no_pwd'), 'warn');
@@ -883,18 +1235,19 @@ function showDecrypt(payload){
     }
   };
 
+  // Copie + vidage auto
   document.getElementById('btnCopy').onclick = () => {
     const btn = document.getElementById('btnCopy');
     const txt = document.getElementById('linkOut').textContent;
     const st = document.getElementById('createStatus');
 
     navigator.clipboard.writeText(txt).then(() => {
-      const origKey = 'btn_copy';
+      scheduleClipboardWipe(txt);
       btn.textContent = t('copied');
       btn.style.color = 'var(--ok)';
       btn.style.borderColor = 'var(--ok)';
       setTimeout(() => {
-        btn.textContent = t(origKey);
+        btn.textContent = t('btn_copy');
         btn.style.color = '';
         btn.style.borderColor = '';
       }, 2000);
