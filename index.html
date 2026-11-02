@@ -8,6 +8,7 @@
 <title>One link One secret</title>
 <style>
   :root {
+    /* Thème sombre (par défaut) */
     color-scheme: dark;
     --bg: #0a0a0a;
     --bg-soft: #121212;
@@ -25,6 +26,36 @@
     --ok: #4ade80;
     --radius: 12px;
     --shadow-gold: 0 0 0 1px var(--border-gold), 0 8px 32px rgba(212, 175, 55, 0.08);
+    --bg-glow-1: rgba(212, 175, 55, 0.12);
+    --bg-glow-2: rgba(212, 175, 55, 0.06);
+    --dropdown-bg: #161616;
+    --dropdown-hover: #1c1c1c;
+    --dropdown-active: rgba(212, 175, 55, 0.15);
+  }
+
+  /* Thème clair */
+  html.light-mode {
+    color-scheme: light;
+    --bg: #f4f4f5;
+    --bg-soft: #ffffff;
+    --card: #ffffff;
+    --card-hi: #f9f9f9;
+    --border: #e4e4e7;
+    --border-gold: rgba(184, 134, 11, 0.4);
+    --gold: #b8860b;
+    --gold-hi: #d4af37;
+    --gold-soft: rgba(184, 134, 11, 0.1);
+    --text: #18181b;
+    --text-dim: #71717a;
+    --warn: #b45309;
+    --err: #dc2626;
+    --ok: #16a34a;
+    --shadow-gold: 0 0 0 1px var(--border-gold), 0 8px 32px rgba(184, 134, 11, 0.1);
+    --bg-glow-1: rgba(212, 175, 55, 0.2);
+    --bg-glow-2: rgba(212, 175, 55, 0.1);
+    --dropdown-bg: #ffffff;
+    --dropdown-hover: #f4f4f5;
+    --dropdown-active: rgba(184, 134, 11, 0.15);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -42,6 +73,7 @@
     min-height: 100dvh;
     overflow-x: hidden;
     position: relative;
+    transition: background-color 0.3s, color 0.3s;
   }
 
   body::before {
@@ -49,8 +81,8 @@
     position: fixed;
     inset: -50%;
     background:
-      radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12), transparent 45%),
-      radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.06), transparent 45%);
+      radial-gradient(circle at 50% 0%, var(--bg-glow-1), transparent 45%),
+      radial-gradient(circle at 100% 100%, var(--bg-glow-2), transparent 45%);
     z-index: -1;
     animation: bgPulse 12s ease-in-out infinite alternate;
     pointer-events: none;
@@ -61,53 +93,110 @@
     100% { transform: scale(1.1); opacity: 1; }
   }
 
-  .lang-switcher {
+  /* --- CONTROLES DU HAUT (LANGUE + THEME) --- */
+  .top-controls {
     position: absolute;
     top: 1rem;
     right: 1rem;
     display: flex;
-    gap: 0.4rem;
+    gap: 0.6rem;
     z-index: 100;
     opacity: 0;
     animation: fadeDown 0.6s ease-out forwards;
   }
 
-  .lang-btn {
+  @media (min-width: 1024px) {
+    .top-controls { top: 2rem; right: 2rem; }
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
     background: var(--card);
     border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s;
-    width: auto;
-    margin: 0;
-    min-height: 0;
-    box-shadow: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  
+  .icon-btn::after { display: none; } /* Désactive l'effet de brillance global */
+  .icon-btn:hover { background: var(--card-hi); border-color: var(--border-gold); transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .icon-btn:active { transform: scale(0.95); }
+
+  /* --- MENU DÉROULANT LANGUE --- */
+  .lang-dropdown { position: relative; }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.5rem;
+    min-width: 170px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
-  .lang-btn:hover {
-    background: var(--card-hi);
+  .dropdown-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
     color: var(--text);
-    border-color: var(--border-gold);
-    transform: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
     box-shadow: none;
+    margin: 0;
+    min-height: 40px;
   }
 
-  .lang-btn.active {
-    background: var(--gold);
-    color: #1a1200;
-    border-color: var(--gold);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  .dropdown-item::after { display: none; } /* Désactive l'effet de brillance */
+  .dropdown-item:hover { background: var(--dropdown-hover); transform: none; }
+  
+  .dropdown-item.active {
+    background: var(--dropdown-active);
+    color: var(--gold);
+    font-weight: 700;
   }
 
-  .lang-btn::after { display: none; }
-
-  @media (min-width: 1024px) {
-    .lang-switcher { top: 2rem; right: 2rem; }
+  .dropdown-item .flag {
+    font-size: 1.2rem;
+    line-height: 1;
   }
+
+  /* --- FIN CONTROLES --- */
 
   .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 4rem); }
 
@@ -143,8 +232,8 @@
     border-radius: var(--radius);
     padding: clamp(1rem, 3vw, 1.5rem);
     margin: 1rem 0;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-    transition: border-color .3s, box-shadow .3s, transform .3s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    transition: border-color .3s, box-shadow .3s, transform .3s, background 0.3s;
     opacity: 0;
     animation: fadeUp 0.6s ease-out 0.15s forwards;
   }
@@ -180,13 +269,14 @@
   textarea:focus, input:focus {
     outline: none;
     border-color: var(--gold);
-    background: #0d0d0d;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px var(--gold-soft);
   }
 
   textarea::placeholder, input::placeholder { color: var(--text-dim); }
 
-  button {
+  /* Boutons standards (hors menu) */
+  button:not(.icon-btn):not(.dropdown-item) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -209,7 +299,7 @@
     overflow: hidden;
   }
 
-  button::after {
+  button:not(.icon-btn):not(.dropdown-item)::after {
     content: '';
     position: absolute;
     top: 0; left: -100%;
@@ -219,17 +309,17 @@
     transition: left 0.5s ease;
   }
 
-  button:hover::after { left: 150%; }
+  button:not(.icon-btn):not(.dropdown-item):hover::after { left: 150%; }
 
-  button:hover {
+  button:not(.icon-btn):not(.dropdown-item):hover {
     background: linear-gradient(135deg, #ffe066, var(--gold-hi));
     box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
     transform: translateY(-2px);
   }
 
-  button:active { transform: translateY(1px) scale(0.98); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
-  button:disabled::after { display: none; }
+  button:not(.icon-btn):not(.dropdown-item):active { transform: translateY(1px) scale(0.98); }
+  button:not(.icon-btn):not(.dropdown-item):disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+  button:not(.icon-btn):not(.dropdown-item):disabled::after { display: none; }
 
   button.alt {
     background: transparent;
@@ -301,7 +391,7 @@
     100% { filter: blur(0); opacity: 1; transform: scale(1); }
   }
 
-  #linkOut { border-color: var(--border-gold); background: rgba(212, 175, 55, 0.04); }
+  #linkOut { border-color: var(--border-gold); background: var(--gold-soft); }
 
   .status {
     margin-top: 0.8rem;
@@ -359,7 +449,7 @@
   .pwd-strength-bar {
     flex: 1;
     height: 5px;
-    background: var(--bg-soft);
+    background: var(--border);
     border-radius: 3px;
     overflow: hidden;
   }
@@ -382,8 +472,8 @@
     gap: 0.7rem;
     margin-top: 1.1rem;
     padding: 0.75rem 0.9rem;
-    background: rgba(251, 191, 36, 0.05);
-    border: 1px solid rgba(251, 191, 36, 0.18);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.88rem;
@@ -393,8 +483,8 @@
   }
 
   .nopwd-toggle:hover {
-    background: rgba(251, 191, 36, 0.09);
-    border-color: rgba(251, 191, 36, 0.32);
+    background: var(--card-hi);
+    border-color: var(--border-gold);
   }
 
   .nopwd-toggle input[type="checkbox"] {
@@ -426,8 +516,8 @@
   .security-note {
     margin-top: 1rem;
     padding: 0.75rem 0.9rem;
-    background: rgba(212, 175, 55, 0.05);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: var(--gold-soft);
+    border: 1px solid var(--border-gold);
     border-radius: 8px;
     font-size: 0.82rem;
     color: var(--text-dim);
@@ -466,14 +556,15 @@
 
   .app-footer a:hover {
     color: var(--gold-hi);
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    text-shadow: 0 0 10px var(--border-gold);
   }
 
   @media (max-width: 480px) {
     body { padding: 0.75rem; }
     .card { padding: 1rem; border-radius: 10px; }
-    h1 { text-align: left; padding: 0; margin-top: 2.5rem; }
+    h1 { text-align: left; padding: 0; margin-top: 3.5rem; }
     button { font-size: 15px; }
+    .top-controls { top: 0.75rem; right: 0.75rem; }
   }
 
   @media (min-width: 1024px) { body { padding: 3rem 2rem; } }
@@ -494,17 +585,26 @@
       scroll-behavior: auto !important;
     }
     .status { opacity: 1; transform: none; }
-    h1, .card, .app-footer, .lang-switcher { opacity: 1; transform: none; }
+    h1, .card, .app-footer, .top-controls { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="lang-switcher">
-  <button class="lang-btn" data-lang="fr" aria-label="Français">FR</button>
-  <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
-  <button class="lang-btn" data-lang="it" aria-label="Italiano">IT</button>
-  <button class="lang-btn" data-lang="tr" aria-label="Türkçe">TR</button>
+<div class="top-controls">
+  <!-- Bouton Langue avec Menu Déroulant -->
+  <div class="lang-dropdown">
+    <button class="icon-btn" id="langToggle" aria-label="Language">FR</button>
+    <div class="dropdown-menu" id="langMenu">
+      <button class="dropdown-item active" data-lang="fr"><span class="flag">🇫🇷</span> Français</button>
+      <button class="dropdown-item" data-lang="en"><span class="flag">🇬🇧</span> English</button>
+      <button class="dropdown-item" data-lang="it"><span class="flag">🇮🇹</span> Italiano</button>
+      <button class="dropdown-item" data-lang="tr"><span class="flag">🇹🇷</span> Türkçe</button>
+    </div>
+  </div>
+  
+  <!-- Bouton Thème (Clair / Sombre) -->
+  <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">🌙</button>
 </div>
 
 <div class="wrap">
@@ -591,6 +691,39 @@
 </div>
 
 <script>
+// --- GESTION DU THÈME (CLAIR / SOMBRE) ---
+const themeToggle = document.getElementById('themeToggle');
+const htmlElement = document.documentElement;
+
+function setTheme(isLight) {
+  if (isLight) {
+    htmlElement.classList.add('light-mode');
+    themeToggle.textContent = '☀️';
+    try { localStorage.setItem('app_theme', 'light'); } catch(e) {}
+  } else {
+    htmlElement.classList.remove('light-mode');
+    themeToggle.textContent = '🌙';
+    try { localStorage.setItem('app_theme', 'dark'); } catch(e) {}
+  }
+}
+
+// Initialisation du thème
+try {
+  const savedTheme = localStorage.getItem('app_theme');
+  if (savedTheme === 'light') {
+    setTheme(true);
+  } else if (savedTheme === 'dark') {
+    setTheme(false);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    setTheme(true); // Thème système par défaut
+  }
+} catch(e) {}
+
+themeToggle.addEventListener('click', () => {
+  const isLight = !htmlElement.classList.contains('light-mode');
+  setTheme(isLight);
+});
+
 // --- TRADUCTIONS ---
 const translations = {
   fr: {
@@ -810,6 +943,7 @@ function setLanguage(lang) {
   currentLang = lang;
   try { localStorage.setItem('app_lang', lang); } catch(e) {}
 
+  // Mise à jour des textes
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
   });
@@ -822,15 +956,36 @@ function setLanguage(lang) {
     el.innerHTML = t(el.getAttribute('data-i18n-html'));
   });
 
-  document.querySelectorAll('.lang-btn').forEach(btn => {
+  // Mise à jour du menu déroulant
+  document.getElementById('langToggle').textContent = lang.toUpperCase();
+  document.querySelectorAll('.dropdown-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
+  
+  // Fermer le menu
+  document.getElementById('langMenu').classList.remove('open');
 
   updatePwdStrength();
 }
 
-document.querySelectorAll('.lang-btn').forEach(btn => {
+// --- GESTION DU MENU DÉROULANT ---
+const langToggle = document.getElementById('langToggle');
+const langMenu = document.getElementById('langMenu');
+
+langToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  langMenu.classList.toggle('open');
+});
+
+document.querySelectorAll('.dropdown-item').forEach(btn => {
   btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
+
+// Fermer le menu si on clique ailleurs
+document.addEventListener('click', (e) => {
+  if (!langMenu.contains(e.target) && e.target !== langToggle) {
+    langMenu.classList.remove('open');
+  }
 });
 
 // --- HELPERS UI ---
@@ -919,10 +1074,6 @@ function updatePwdStrength() {
 }
 
 // --- RATE LIMITING PERSISTANT ---
-// NOTE : défense en profondeur uniquement. Un attaquant peut vider localStorage
-// ou exécuter son propre code de déchiffrement hors site. Empêche seulement les
-// tentatives naïves via ce site. La vraie protection reste la force du mot de passe.
-
 const RL_PREFIX = 'rl_';
 const RL_MAX_BEFORE_LOCK = 5;
 const RL_LOCK_5MIN = 5 * 60 * 1000;
@@ -1130,7 +1281,6 @@ function showDecrypt(payload){
     btnText.setAttribute('data-i18n', 'btn_decrypt');
   }
 
-  // Vérifier un éventuel verrouillage résiduel dès l'affichage
   if (payload.v !== 2) {
     const rl = rlCheck(payload);
     if (rl.locked) {
@@ -1153,7 +1303,6 @@ function showDecrypt(payload){
   }
 
   btn.onclick = async () => {
-    // 1) Vérifier le rate limit AVANT de tenter
     if (payload.v !== 2) {
       const rl = rlCheck(payload);
       if (rl.locked) {
@@ -1169,7 +1318,6 @@ function showDecrypt(payload){
 
     try {
       const pt = await decrypt(payload, pwdInput.value);
-      // Succès : on efface le compteur d'échecs pour ce lien
       if (payload.v !== 2) rlClear(payload);
       revealWithAutoMask(out, pt);
       pwdInput.value = '';
@@ -1182,7 +1330,6 @@ function showDecrypt(payload){
           out.textContent = t('err_rate_limited', { time: formatRemaining(state.lockedUntil - Date.now()) });
         } else {
           out.className = 'err';
-          const remaining = RL_MAX_BEFORE_LOCK - state.attempts;
           out.textContent = t('err_decrypt_pwd') + '\n' + t('warn_rate_limit_soon', { n: state.attempts });
         }
       } else {
@@ -1221,22 +1368,19 @@ function showDecrypt(payload){
     }
   });
 
-  // Indicateur de force en temps réel
   passInput.addEventListener('input', updatePwdStrength);
   updatePwdStrength();
 
-  // Générateur de mot de passe
   document.getElementById('btnGenPwd').addEventListener('click', () => {
     const pwd = generateStrongPassword(20);
     passInput.value = pwd;
     document.getElementById('pass2').value = pwd;
-    passInput.type = 'text'; // montrer brièvement
+    passInput.type = 'text';
     updatePwdStrength();
     setStatus(document.getElementById('createStatus'), t('gen_pwd_filled'), 'ok');
     setTimeout(() => { passInput.type = 'password'; }, 4000);
   });
 
-  // Création
   document.getElementById('btnCreate').onclick = async () => {
     const btn = document.getElementById('btnCreate');
     const plain = document.getElementById('plain').value;
@@ -1286,7 +1430,6 @@ function showDecrypt(payload){
     }
   };
 
-  // Copie + vidage auto
   document.getElementById('btnCopy').onclick = () => {
     const btn = document.getElementById('btnCopy');
     const txt = document.getElementById('linkOut').textContent;
