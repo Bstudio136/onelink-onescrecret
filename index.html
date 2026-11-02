@@ -504,6 +504,7 @@
   <button class="lang-btn" data-lang="fr" aria-label="Français">FR</button>
   <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
   <button class="lang-btn" data-lang="it" aria-label="Italiano">IT</button>
+  <button class="lang-btn" data-lang="tr" aria-label="Türkçe">TR</button>
 </div>
 
 <div class="wrap">
@@ -741,6 +742,56 @@ const translations = {
     warn_rate_limit_soon: "⚠️ Tentativo {n} di 5 prima del blocco temporaneo.",
     secret_masked: "••••••••  Segreto nascosto dopo 45 s — clicca per rivelare.",
     gen_pwd_filled: "✅ Password generata. Copiala per inviarla separatamente dal link."
+  },
+  tr: {
+    app_title: "🔐 One link One secret",
+    create_title: "Bir sır oluştur",
+    label_secret: "Sır",
+    placeholder_secret: "Sırrınız (şifre, PGP anahtarı vb.)…",
+    label_pwd: "Şifre koruması",
+    placeholder_pwd: "Şifre (zorunlu)",
+    label_confirm: "Onay",
+    placeholder_confirm: "Şifreyi onayla",
+    hint_text: "💡 Güçlü bir şifre, <strong>bağlantı sızdırılsa bile</strong> sırrı korur.",
+    btn_gen_pwd: "🎲 Güçlü şifre oluştur",
+    pwd_strength_empty: "—",
+    pwd_strength_weak: "Zayıf",
+    pwd_strength_fair: "Orta",
+    pwd_strength_strong: "Güçlü",
+    pwd_strength_short: "Çok kısa (en az 12 karakter)",
+    nopwd_label: "Şifresiz oluştur (önerilmez)",
+    nopwd_sub: "Bağlantının kendisi sır haline gelir — ona sahip olan herkes okuyabilir.",
+    nopwd_warn: "⚠️ Dikkat: bu bağlantı sırrın kendisidir. Bir kez paylaşıldığında iptal edilemez.",
+    btn_create: "Şifrele ve bağlantı oluştur",
+    link_to_share: "Paylaşılacak bağlantı",
+    btn_copy: "Bağlantıyı kopyala",
+    share_note: "🔑 <strong>Önemli:</strong> şifreyi bağlantıdan <em>farklı bir kanaldan</em> iletin (Signal, yüz yüze vb.). Bağlantı tek başına sırrı okumaya yetmez.",
+    bruteforce_note: "🛡️ <strong>Koruma:</strong> 5 başarısız denemeden sonra, bu tarayıcıdan bu bağlantıya erişim geçici olarak kilitlenir. Bu koruma <em>yereldir</em>.",
+    decrypt_title: "Bir sırrın şifresini çöz",
+    decrypt_intro_pwd: "Bağlantıda şifrelenmiş bir sır var. Ortaya çıkarmak için şifreyi girin.",
+    decrypt_intro_nopwd: "Bu sır yalnızca bağlantı ile korunuyor (şifre yok). Ortaya çıkarmak için tıklayın.",
+    btn_decrypt: "Şifreyi çöz",
+    btn_reveal: "Sırrı göster",
+    footer_text: "Geliştiren <a href='https://bstudio136.github.io/mylink/' target='_blank' rel='noopener noreferrer'>Bstudio136</a>",
+    err_empty_secret: "Sır boş.",
+    err_pwd_required: "Şifre gerekli. Şifresiz bir bağlantı oluşturmak için aşağıdaki kutuyu işaretleyin.",
+    err_pwd_mismatch: "Şifreler eşleşmiyor.",
+    err_pwd_too_short: "Şifre en az 12 karakter içermelidir.",
+    loading_encrypt_pwd: "Şifreleniyor... (2.000.000 PBKDF2 iterasyonu)",
+    loading_encrypt_nopwd: "Şifreleniyor... (rastgele 256 bit anahtar)",
+    warn_no_pwd: "⚠️ Bağlantı şifresiz oluşturuldu. Bu bağlantıya sahip olan herkes sırrı okuyabilir.",
+    ok_pwd: "✅ Bağlantı oluşturuldu ve şifreyle korunuyor. Sır parçada (#) kalır, hiçbir zaman bir sunucuya gönderilmez.",
+    err_prefix: "Hata: ",
+    copied: "✅ Kopyalandı!",
+    copy_success: "Bağlantı kopyalandı. Pano 30 sn içinde otomatik olarak temizlenecek.",
+    copy_fail: "Kopyalama başarısız. Bağlantıyı elle seçin.",
+    loading_decrypt: "Lütfen bekleyin...",
+    err_decrypt_pwd: "❌ Yanlış şifre veya bozuk veri.",
+    err_decrypt_nopwd: "❌ Bozuk veri.",
+    err_rate_limited: "🚫 Çok fazla deneme. {time} sonra tekrar deneyin.",
+    warn_rate_limit_soon: "⚠️ Geçici kilitten önce {n}/5. deneme.",
+    secret_masked: "••••••••  Sır 45 sn sonra gizlendi — göstermek için tıklayın.",
+    gen_pwd_filled: "✅ Şifre oluşturuldu. Bağlantıdan ayrı olarak göndermek için kopyalayın."
   }
 };
 
