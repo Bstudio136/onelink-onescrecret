@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 
-<!-- ✅ LIGNE AJOUTÉE ICI -->
+<!-- ✅ LIEN VERS LE MANIFEST -->
 <link rel="manifest" href="secret.webmanifest" />
 
-<!-- ✅ CSP CORRIGÉE ICI (ajout de manifest-src 'self' et img-src 'self') -->
+<!-- ✅ CSP CORRIGÉE -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: https://raw.githubusercontent.com; manifest-src 'self'; base-uri 'self'; form-action 'none';">
 
 <title>One link One secret</title>
@@ -16,7 +16,6 @@
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png">
 <style>
   :root {
-    /* Thème sombre (par défaut) */
     color-scheme: dark;
     --bg: #0a0a0a;
     --bg-soft: #121212;
@@ -41,7 +40,6 @@
     --dropdown-active: rgba(212, 175, 55, 0.15);
   }
 
-  /* Thème clair */
   html.light-mode {
     color-scheme: light;
     --bg: #f4f4f5;
@@ -101,26 +99,72 @@
     100% { transform: scale(1.1); opacity: 1; }
   }
 
-  /* --- CONTROLES DU HAUT (LANGUE + THEME) --- */
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 4rem); }
+
+  /* --- NOUVEAU CONTENEUR POUR ALIGNER TITRE ET BOUTONS --- */
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: clamp(1.2rem, 1rem + 1vw, 1.8rem);
+    margin: 0;
+    letter-spacing: -0.01em;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    opacity: 0;
+    animation: fadeDown 0.6s ease-out forwards;
+    white-space: nowrap;
+  }
+
+  h1 .logo-img {
+    width: clamp(30px, 4vw, 46px);
+    height: clamp(30px, 4vw, 46px);
+    border-radius: 10px;
+    border: 1px solid var(--border-gold);
+    box-shadow: 0 2px 14px rgba(212, 175, 55, 0.25);
+    background: var(--card);
+    object-fit: contain;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  h1 .logo-img:hover {
+    transform: rotate(-4deg) scale(1.06);
+    box-shadow: 0 4px 22px rgba(212, 175, 55, 0.45);
+  }
+
+  h1 .title-text {
+    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* --- CONTROLES DU HAUT (LANGUE + THEME) SANS POSITION ABSOLUE --- */
   .top-controls {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
     display: flex;
     gap: 0.6rem;
     z-index: 100;
+    flex-shrink: 0;
     opacity: 0;
     animation: fadeDown 0.6s ease-out forwards;
   }
 
-  @media (min-width: 1024px) {
-    .top-controls { top: 2rem; right: 2rem; }
-  }
-
   .icon-btn {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
     padding: 0;
     margin: 0;
     border-radius: 50%;
@@ -131,7 +175,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -142,7 +186,6 @@
   .icon-btn:hover { background: var(--card-hi); border-color: var(--border-gold); transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .icon-btn:active { transform: scale(0.95); }
 
-  /* --- MENU DÉROULANT LANGUE --- */
   .lang-dropdown { position: relative; }
 
   .dropdown-menu {
@@ -202,49 +245,6 @@
   .dropdown-item .flag {
     font-size: 1.2rem;
     line-height: 1;
-  }
-
-  /* --- FIN CONTROLES --- */
-
-  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 4rem); }
-
-  h1 {
-    font-size: clamp(1.3rem, 1rem + 1.2vw, 1.8rem);
-    margin: 0 0 clamp(1rem, 2vw, 1.5rem);
-    letter-spacing: -0.01em;
-    text-align: center;
-    opacity: 0;
-    animation: fadeDown 0.6s ease-out forwards;
-    padding: 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-  }
-
-  h1 .logo-img {
-    width: clamp(34px, 4.5vw, 46px);
-    height: clamp(34px, 4.5vw, 46px);
-    border-radius: 10px;
-    border: 1px solid var(--border-gold);
-    box-shadow: 0 2px 14px rgba(212, 175, 55, 0.25);
-    background: var(--card);
-    object-fit: contain;
-    flex-shrink: 0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  h1 .logo-img:hover {
-    transform: rotate(-4deg) scale(1.06);
-    box-shadow: 0 4px 22px rgba(212, 175, 55, 0.45);
-  }
-
-  h1 .title-text {
-    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
 
   @keyframes fadeDown {
@@ -589,12 +589,17 @@
     text-shadow: 0 0 10px var(--border-gold);
   }
 
+  /* --- AJUSTEMENTS POUR MOBILE --- */
   @media (max-width: 480px) {
     body { padding: 0.75rem; }
     .card { padding: 1rem; border-radius: 10px; }
-    h1 { text-align: left; padding: 0; margin-top: 3.5rem; justify-content: flex-start; }
     button { font-size: 15px; }
-    .top-controls { top: 0.75rem; right: 0.75rem; }
+    
+    /* On réduit un peu la taille pour que tout rentre sur la même ligne */
+    h1 { font-size: 1.15rem; gap: 0.4rem; }
+    h1 .logo-img { width: 28px; height: 28px; }
+    .icon-btn { width: 36px; height: 36px; min-height: 36px; font-size: 0.9rem; }
+    .top-controls { gap: 0.4rem; }
   }
 
   @media (min-width: 1024px) { body { padding: 3rem 2rem; } }
@@ -621,25 +626,29 @@
 </head>
 <body>
 
-<div class="top-controls">
-  <div class="lang-dropdown">
-    <button class="icon-btn" id="langToggle" aria-label="Language">FR</button>
-    <div class="dropdown-menu" id="langMenu">
-      <button class="dropdown-item active" data-lang="fr"><span class="flag">🇫🇷</span> Français</button>
-      <button class="dropdown-item" data-lang="en"><span class="flag">🇬🇧</span> English</button>
-      <button class="dropdown-item" data-lang="it"><span class="flag">🇮🇹</span> Italiano</button>
-      <button class="dropdown-item" data-lang="tr"><span class="flag">🇹🇷</span> Türkçe</button>
+<div class="wrap">
+  
+  <!-- ✅ NOUVEAU CONTENEUR ICI POUR ALIGNER LE TITRE ET LES BOUTONS -->
+  <div class="header-top">
+    <h1>
+      <img class="logo-img" src="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png" alt="One link One secret" width="46" height="46" loading="eager" decoding="async">
+      <span class="title-text" data-i18n="app_title">🔐 One link One secret</span>
+    </h1>
+
+    <div class="top-controls">
+      <div class="lang-dropdown">
+        <button class="icon-btn" id="langToggle" aria-label="Language">FR</button>
+        <div class="dropdown-menu" id="langMenu">
+          <button class="dropdown-item active" data-lang="fr"><span class="flag">🇫🇷</span> Français</button>
+          <button class="dropdown-item" data-lang="en"><span class="flag">🇬🇧</span> English</button>
+          <button class="dropdown-item" data-lang="it"><span class="flag">🇮🇹</span> Italiano</button>
+          <button class="dropdown-item" data-lang="tr"><span class="flag">🇹🇷</span> Türkçe</button>
+        </div>
+      </div>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">🌙</button>
     </div>
   </div>
-  
-  <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">🌙</button>
-</div>
-
-<div class="wrap">
-  <h1>
-    <img class="logo-img" src="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png" alt="One link One secret" width="46" height="46" loading="eager" decoding="async">
-    <span class="title-text" data-i18n="app_title">🔐 One link One secret</span>
-  </h1>
+  <!-- ✅ FIN DU NOUVEAU CONTENEUR -->
 
   <div id="createPanel" class="card">
     <h2 data-i18n="create_title">Créer un secret</h2>
