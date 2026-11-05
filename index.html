@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'self'; form-action 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: https://raw.githubusercontent.com; base-uri 'self'; form-action 'none';">
 <title>One link One secret</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png">
 <style>
   :root {
     /* Thème sombre (par défaut) */
@@ -204,14 +206,41 @@
     font-size: clamp(1.3rem, 1rem + 1.2vw, 1.8rem);
     margin: 0 0 clamp(1rem, 2vw, 1.5rem);
     letter-spacing: -0.01em;
-    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
     text-align: center;
     opacity: 0;
     animation: fadeDown 0.6s ease-out forwards;
     padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* Logo image dans le titre */
+  h1 .logo-img {
+    width: clamp(34px, 4.5vw, 46px);
+    height: clamp(34px, 4.5vw, 46px);
+    border-radius: 10px;
+    border: 1px solid var(--border-gold);
+    box-shadow: 0 2px 14px rgba(212, 175, 55, 0.25);
+    background: var(--card);
+    object-fit: contain;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  h1 .logo-img:hover {
+    transform: rotate(-4deg) scale(1.06);
+    box-shadow: 0 4px 22px rgba(212, 175, 55, 0.45);
+  }
+
+  /* Le texte garde son dégradé doré */
+  h1 .title-text {
+    background: linear-gradient(135deg, var(--gold-hi), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   @keyframes fadeDown {
@@ -562,7 +591,7 @@
   @media (max-width: 480px) {
     body { padding: 0.75rem; }
     .card { padding: 1rem; border-radius: 10px; }
-    h1 { text-align: left; padding: 0; margin-top: 3.5rem; }
+    h1 { text-align: left; padding: 0; margin-top: 3.5rem; justify-content: flex-start; }
     button { font-size: 15px; }
     .top-controls { top: 0.75rem; right: 0.75rem; }
   }
@@ -608,7 +637,10 @@
 </div>
 
 <div class="wrap">
-  <h1 data-i18n="app_title">🔐 One link One secret</h1>
+  <h1>
+    <img class="logo-img" src="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png" alt="One link One secret" width="46" height="46" loading="eager" decoding="async">
+    <span class="title-text" data-i18n="app_title">🔐 One link One secret</span>
+  </h1>
 
   <div id="createPanel" class="card">
     <h2 data-i18n="create_title">Créer un secret</h2>
