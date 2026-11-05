@@ -4,8 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-  <link rel="manifest" href="secret.webmanifest" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: https://raw.githubusercontent.com; base-uri 'self'; form-action 'none';">
+
+<!-- ✅ LIGNE AJOUTÉE ICI -->
+<link rel="manifest" href="secret.webmanifest" />
+
+<!-- ✅ CSP CORRIGÉE ICI (ajout de manifest-src 'self' et img-src 'self') -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: https://raw.githubusercontent.com; manifest-src 'self'; base-uri 'self'; form-action 'none';">
+
 <title>One link One secret</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Bstudio136/onelink-onescrecret/main/one.png">
@@ -133,7 +138,7 @@
     position: relative;
   }
   
-  .icon-btn::after { display: none; } /* Désactive l'effet de brillance global */
+  .icon-btn::after { display: none; }
   .icon-btn:hover { background: var(--card-hi); border-color: var(--border-gold); transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .icon-btn:active { transform: scale(0.95); }
 
@@ -185,7 +190,7 @@
     min-height: 40px;
   }
 
-  .dropdown-item::after { display: none; } /* Désactive l'effet de brillance */
+  .dropdown-item::after { display: none; }
   .dropdown-item:hover { background: var(--dropdown-hover); transform: none; }
   
   .dropdown-item.active {
@@ -218,7 +223,6 @@
     flex-wrap: wrap;
   }
 
-  /* Logo image dans le titre */
   h1 .logo-img {
     width: clamp(34px, 4.5vw, 46px);
     height: clamp(34px, 4.5vw, 46px);
@@ -236,7 +240,6 @@
     box-shadow: 0 4px 22px rgba(212, 175, 55, 0.45);
   }
 
-  /* Le texte garde son dégradé doré */
   h1 .title-text {
     background: linear-gradient(135deg, var(--gold-hi), var(--gold));
     -webkit-background-clip: text;
@@ -305,7 +308,6 @@
 
   textarea::placeholder, input::placeholder { color: var(--text-dim); }
 
-  /* Boutons standards (hors menu) */
   button:not(.icon-btn):not(.dropdown-item) {
     display: inline-flex;
     align-items: center;
@@ -466,7 +468,6 @@
     border-top: 1px dashed var(--border);
   }
 
-  /* --- FORCE DU MOT DE PASSE --- */
   .pwd-strength {
     margin-top: 0.5rem;
     display: flex;
@@ -495,7 +496,6 @@
   .pwd-strength-fill.fair { background: var(--warn); width: 55%; }
   .pwd-strength-fill.strong { background: var(--ok); width: 100%; }
 
-  /* --- CASE "SANS MOT DE PASSE" --- */
   .nopwd-toggle {
     display: flex;
     align-items: flex-start;
@@ -622,7 +622,6 @@
 <body>
 
 <div class="top-controls">
-  <!-- Bouton Langue avec Menu Déroulant -->
   <div class="lang-dropdown">
     <button class="icon-btn" id="langToggle" aria-label="Language">FR</button>
     <div class="dropdown-menu" id="langMenu">
@@ -633,7 +632,6 @@
     </div>
   </div>
   
-  <!-- Bouton Thème (Clair / Sombre) -->
   <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">🌙</button>
 </div>
 
@@ -724,7 +722,6 @@
 </div>
 
 <script>
-// --- GESTION DU THÈME (CLAIR / SOMBRE) ---
 const themeToggle = document.getElementById('themeToggle');
 const htmlElement = document.documentElement;
 
@@ -740,7 +737,6 @@ function setTheme(isLight) {
   }
 }
 
-// Initialisation du thème
 try {
   const savedTheme = localStorage.getItem('app_theme');
   if (savedTheme === 'light') {
@@ -748,7 +744,7 @@ try {
   } else if (savedTheme === 'dark') {
     setTheme(false);
   } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    setTheme(true); // Thème système par défaut
+    setTheme(true);
   }
 } catch(e) {}
 
@@ -757,7 +753,6 @@ themeToggle.addEventListener('click', () => {
   setTheme(isLight);
 });
 
-// --- TRADUCTIONS ---
 const translations = {
   fr: {
     app_title: "🔐 One link One secret",
@@ -976,7 +971,6 @@ function setLanguage(lang) {
   currentLang = lang;
   try { localStorage.setItem('app_lang', lang); } catch(e) {}
 
-  // Mise à jour des textes
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.getAttribute('data-i18n'));
   });
@@ -989,19 +983,16 @@ function setLanguage(lang) {
     el.innerHTML = t(el.getAttribute('data-i18n-html'));
   });
 
-  // Mise à jour du menu déroulant
   document.getElementById('langToggle').textContent = lang.toUpperCase();
   document.querySelectorAll('.dropdown-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
   
-  // Fermer le menu
   document.getElementById('langMenu').classList.remove('open');
 
   updatePwdStrength();
 }
 
-// --- GESTION DU MENU DÉROULANT ---
 const langToggle = document.getElementById('langToggle');
 const langMenu = document.getElementById('langMenu');
 
@@ -1014,14 +1005,12 @@ document.querySelectorAll('.dropdown-item').forEach(btn => {
   btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
 });
 
-// Fermer le menu si on clique ailleurs
 document.addEventListener('click', (e) => {
   if (!langMenu.contains(e.target) && e.target !== langToggle) {
     langMenu.classList.remove('open');
   }
 });
 
-// --- HELPERS UI ---
 function setStatus(el, text, type = '') {
   el.className = 'status ' + type;
   el.textContent = text;
@@ -1041,7 +1030,6 @@ function setLoading(btn, loadingText, isLoading) {
   }
 }
 
-// --- GÉNÉRATEUR DE MOT DE PASSE ---
 function randomInt(max) {
   const arr = new Uint32Array(1);
   const limit = Math.floor(0xFFFFFFFF / max) * max;
@@ -1076,7 +1064,6 @@ function generateStrongPassword(length = 20) {
   return result.join('');
 }
 
-// --- INDICATEUR DE FORCE ---
 function estimateStrength(pwd) {
   if (!pwd) return 'empty';
   if (pwd.length < 12) return 'short';
@@ -1106,7 +1093,6 @@ function updatePwdStrength() {
   if (level === 'strong') { fill.classList.add('strong'); text.textContent = t('pwd_strength_strong'); }
 }
 
-// --- RATE LIMITING PERSISTANT ---
 const RL_PREFIX = 'rl_';
 const RL_MAX_BEFORE_LOCK = 5;
 const RL_LOCK_5MIN = 5 * 60 * 1000;
@@ -1159,7 +1145,6 @@ function formatRemaining(ms) {
   return h + ' h';
 }
 
-// --- CRYPTO ---
 function b64(buf){const b=new Uint8Array(buf);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s);}
 function b64d(s){const bin=atob(s);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
 function b64url(s){return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
@@ -1214,7 +1199,6 @@ function parseFragment(raw){
   } catch(e) { return null; }
 }
 
-// --- MASQUAGE AUTO DU SECRET RÉVÉLÉ ---
 let autoMaskTimer = null;
 let autoMaskOriginal = '';
 const AUTO_MASK_MS = 45000;
@@ -1244,7 +1228,6 @@ function revealWithAutoMask(preEl, text) {
   scheduleMask(preEl);
 }
 
-// --- VIDAGE AUTO DU PRESSE-PAPIERS ---
 let clipboardTimer = null;
 
 function scheduleClipboardWipe(originalText) {
@@ -1257,7 +1240,6 @@ function scheduleClipboardWipe(originalText) {
   }, 30000);
 }
 
-// --- NETTOYAGE BFCACHE ---
 function wipeSensitiveDom() {
   try {
     ['plain', 'pass', 'pass2', 'dpass'].forEach(id => {
@@ -1285,7 +1267,6 @@ window.addEventListener('pageshow', (event) => {
   }
 });
 
-// --- PANNEAU DÉCHIFFREMENT ---
 function showDecrypt(payload){
   const createPanel = document.getElementById('createPanel');
   const decryptPanel = document.getElementById('decryptPanel');
@@ -1375,7 +1356,6 @@ function showDecrypt(payload){
   };
 }
 
-// --- INIT ---
 (function init(){
   let savedLang = 'fr';
   try { savedLang = localStorage.getItem('app_lang') || 'fr'; } catch(e) {}
