@@ -312,7 +312,62 @@
 
   textarea::placeholder, input::placeholder { color: var(--text-dim); }
 
-  button:not(.icon-btn):not(.dropdown-item) {
+  /* --- Wrapper mot de passe + boutons oeil/copier --- */
+  .pwd-input-wrap {
+    position: relative;
+    margin: 0.4rem 0;
+  }
+
+  .pwd-input-wrap input {
+    margin: 0;
+    padding-right: 5rem;
+  }
+
+  .pwd-input-wrap.single input {
+    padding-right: 2.8rem;
+  }
+
+  .pwd-action-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.35rem;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    box-shadow: none;
+    z-index: 2;
+  }
+
+  .pwd-action-btn + .pwd-action-btn {
+    right: calc(0.35rem + 32px + 0.1rem);
+  }
+
+  .pwd-action-btn:hover {
+    background: var(--gold-soft);
+    color: var(--gold);
+    transform: translateY(-50%);
+    box-shadow: none;
+  }
+
+  .pwd-action-btn:active {
+    transform: translateY(-50%) scale(0.9);
+  }
+
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -335,7 +390,7 @@
     overflow: hidden;
   }
 
-  button:not(.icon-btn):not(.dropdown-item)::after {
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn)::after {
     content: '';
     position: absolute;
     top: 0; left: -100%;
@@ -345,17 +400,17 @@
     transition: left 0.5s ease;
   }
 
-  button:not(.icon-btn):not(.dropdown-item):hover::after { left: 150%; }
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn):hover::after { left: 150%; }
 
-  button:not(.icon-btn):not(.dropdown-item):hover {
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn):hover {
     background: linear-gradient(135deg, #ffe066, var(--gold-hi));
     box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
     transform: translateY(-2px);
   }
 
-  button:not(.icon-btn):not(.dropdown-item):active { transform: translateY(1px) scale(0.98); }
-  button:not(.icon-btn):not(.dropdown-item):disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
-  button:not(.icon-btn):not(.dropdown-item):disabled::after { display: none; }
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn):active { transform: translateY(1px) scale(0.98); }
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn):disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+  button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn):disabled::after { display: none; }
 
   button.alt {
     background: transparent;
@@ -654,6 +709,21 @@
       border-radius: 7px;
     }
 
+    /* Ajustement wrapper boutons mdp sur mobile */
+    .pwd-input-wrap { margin: 0.25rem 0; }
+    .pwd-input-wrap input { padding-right: 4.5rem; }
+    .pwd-input-wrap.single input { padding-right: 2.5rem; }
+    .pwd-action-btn {
+      width: 28px;
+      height: 28px;
+      min-height: 28px;
+      font-size: 0.9rem;
+      right: 0.25rem;
+    }
+    .pwd-action-btn + .pwd-action-btn {
+      right: calc(0.25rem + 28px + 0.1rem);
+    }
+
     .divider { margin: 0.6rem 0 0; }
 
     .pwd-strength {
@@ -676,7 +746,7 @@
       margin: 0.3rem 0 0;
     }
 
-    button:not(.icon-btn):not(.dropdown-item) {
+    button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn) {
       min-height: 40px;
       padding: 0.5rem 1rem;
       font-size: 14px;
@@ -793,7 +863,21 @@
       padding: 0.5rem 0.6rem;
     }
 
-    button:not(.icon-btn):not(.dropdown-item) {
+    .pwd-input-wrap { margin: 0.2rem 0; }
+    .pwd-input-wrap input { padding-right: 4.2rem; }
+    .pwd-input-wrap.single input { padding-right: 2.4rem; }
+    .pwd-action-btn {
+      width: 26px;
+      height: 26px;
+      min-height: 26px;
+      font-size: 0.85rem;
+      right: 0.2rem;
+    }
+    .pwd-action-btn + .pwd-action-btn {
+      right: calc(0.2rem + 26px + 0.1rem);
+    }
+
+    button:not(.icon-btn):not(.dropdown-item):not(.pwd-action-btn) {
       min-height: 36px;
       font-size: 13px;
       padding: 0.45rem 0.9rem;
@@ -879,7 +963,11 @@
 
     <div id="pwdFields">
       <label class="label" for="pass" data-i18n="label_pwd">Mot de passe de protection</label>
-      <input type="password" id="pass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe (obligatoire)" autocomplete="new-password">
+      <div class="pwd-input-wrap">
+        <input type="password" id="pass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe (obligatoire)" autocomplete="new-password">
+        <button type="button" class="pwd-action-btn" id="btnTogglePass" aria-label="Afficher le mot de passe" title="Afficher / Masquer">👁️</button>
+        <button type="button" class="pwd-action-btn" id="btnCopyPass" aria-label="Copier le mot de passe" title="Copier le mot de passe">📋</button>
+      </div>
 
       <div class="pwd-strength">
         <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwdStrengthFill"></div></div>
@@ -891,7 +979,10 @@
       </button>
 
       <label class="label" for="pass2" data-i18n="label_confirm">Confirmation</label>
-      <input type="password" id="pass2" data-i18n-placeholder="placeholder_confirm" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+      <div class="pwd-input-wrap single">
+        <input type="password" id="pass2" data-i18n-placeholder="placeholder_confirm" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+        <button type="button" class="pwd-action-btn" id="btnTogglePass2" aria-label="Afficher le mot de passe" title="Afficher / Masquer">👁️</button>
+      </div>
     </div>
 
     <small class="hint" data-i18n-html="hint_text">
@@ -931,7 +1022,10 @@
 
     <div id="pwdBlock">
       <label class="label" for="dpass" data-i18n="label_pwd">Mot de passe</label>
-      <input type="password" id="dpass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe" autocomplete="off">
+      <div class="pwd-input-wrap single">
+        <input type="password" id="dpass" data-i18n-placeholder="placeholder_pwd" placeholder="Mot de passe" autocomplete="off">
+        <button type="button" class="pwd-action-btn" id="btnToggleDpass" aria-label="Afficher le mot de passe" title="Afficher / Masquer">👁️</button>
+      </div>
     </div>
 
     <button id="btnDecrypt">
@@ -1024,6 +1118,8 @@ const translations = {
     copied: "✅ Copié !",
     copy_success: "Lien copié. Vidage automatique du presse-papiers dans 30 s.",
     copy_fail: "Copie impossible. Sélectionnez le lien manuellement.",
+    pwd_copied: "✅ Mot de passe copié (vidage auto dans 30 s).",
+    pwd_copy_fail: "❌ Copie impossible.",
     loading_decrypt: "Patientez...",
     err_decrypt_pwd: "❌ Mot de passe incorrect ou données corrompues.",
     err_decrypt_nopwd: "❌ Données corrompues.",
@@ -1074,6 +1170,8 @@ const translations = {
     copied: "✅ Copied!",
     copy_success: "Link copied. Clipboard will be cleared in 30 s.",
     copy_fail: "Copy failed. Select the link manually.",
+    pwd_copied: "✅ Password copied (auto-clear in 30 s).",
+    pwd_copy_fail: "❌ Copy failed.",
     loading_decrypt: "Please wait...",
     err_decrypt_pwd: "❌ Incorrect password or corrupted data.",
     err_decrypt_nopwd: "❌ Corrupted data.",
@@ -1124,6 +1222,8 @@ const translations = {
     copied: "✅ Copiato!",
     copy_success: "Link copiato. Gli appunti verranno svuotati tra 30 s.",
     copy_fail: "Copia non riuscita. Seleziona il link manualmente.",
+    pwd_copied: "✅ Password copiata (cancellazione auto tra 30 s).",
+    pwd_copy_fail: "❌ Copia non riuscita.",
     loading_decrypt: "Attendere prego...",
     err_decrypt_pwd: "❌ Password errata o dati corrotti.",
     err_decrypt_nopwd: "❌ Dati corrotti.",
@@ -1174,6 +1274,8 @@ const translations = {
     copied: "✅ Kopyalandı!",
     copy_success: "Bağlantı kopyalandı. Pano 30 sn içinde otomatik olarak temizlenecek.",
     copy_fail: "Kopyalama başarısız. Bağlantıyı elle seçin.",
+    pwd_copied: "✅ Şifre kopyalandı (30 sn içinde otomatik silinecek).",
+    pwd_copy_fail: "❌ Kopyalama başarısız.",
     loading_decrypt: "Lütfen bekleyin...",
     err_decrypt_pwd: "❌ Yanlış şifre veya bozuk veri.",
     err_decrypt_nopwd: "❌ Bozuk veri.",
@@ -1321,6 +1423,63 @@ function updatePwdStrength() {
   if (level === 'weak') { fill.classList.add('weak'); text.textContent = t('pwd_strength_weak'); return; }
   if (level === 'fair') { fill.classList.add('fair'); text.textContent = t('pwd_strength_fair'); return; }
   if (level === 'strong') { fill.classList.add('strong'); text.textContent = t('pwd_strength_strong'); }
+}
+
+/* --- Oeil Afficher/Masquer --- */
+function syncEyeIcon(input, btn) {
+  if (!input || !btn) return;
+  const isHidden = input.type === 'password';
+  btn.textContent = isHidden ? '👁️' : '🙈';
+  btn.setAttribute('aria-label', isHidden ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
+  btn.title = isHidden ? 'Afficher le mot de passe' : 'Masquer le mot de passe';
+}
+
+function bindEyeToggle(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  if (!input || !btn) return;
+  btn.addEventListener('click', () => {
+    input.type = input.type === 'password' ? 'text' : 'password';
+    syncEyeIcon(input, btn);
+  });
+  syncEyeIcon(input, btn);
+}
+
+/* --- Copier le mot de passe de protection --- */
+function bindCopyPass() {
+  const btn = document.getElementById('btnCopyPass');
+  const input = document.getElementById('pass');
+  if (!btn || !input) return;
+
+  btn.addEventListener('click', async () => {
+    const val = input.value;
+    if (!val) {
+      btn.textContent = '⛔';
+      setTimeout(() => syncEyeIcon(input, btn) || (btn.textContent = '📋'), 1500);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(val);
+      scheduleClipboardWipe(val);
+      const st = document.getElementById('createStatus');
+      if (st) setStatus(st, t('pwd_copied'), 'ok');
+      btn.textContent = '✅';
+      btn.style.color = 'var(--ok)';
+      setTimeout(() => {
+        btn.textContent = '📋';
+        btn.style.color = '';
+      }, 1500);
+    } catch(e) {
+      const st = document.getElementById('createStatus');
+      if (st) setStatus(st, t('pwd_copy_fail'), 'err');
+      btn.textContent = '❌';
+      btn.style.color = 'var(--err)';
+      setTimeout(() => {
+        btn.textContent = '📋';
+        btn.style.color = '';
+      }, 1500);
+    }
+  });
 }
 
 const RL_PREFIX = 'rl_';
@@ -1591,6 +1750,12 @@ function showDecrypt(payload){
   try { savedLang = localStorage.getItem('app_lang') || 'fr'; } catch(e) {}
   setLanguage(savedLang);
 
+  // Liaison des boutons oeil + copier (toujours présents dans le DOM, même si masqués)
+  bindEyeToggle('pass', 'btnTogglePass');
+  bindEyeToggle('pass2', 'btnTogglePass2');
+  bindEyeToggle('dpass', 'btnToggleDpass');
+  bindCopyPass();
+
   const payload = parseFragment(location.hash);
   if (payload) { showDecrypt(payload); return; }
 
@@ -1620,8 +1785,12 @@ function showDecrypt(payload){
     document.getElementById('pass2').value = pwd;
     passInput.type = 'text';
     updatePwdStrength();
+    syncEyeIcon(passInput, document.getElementById('btnTogglePass'));
     setStatus(document.getElementById('createStatus'), t('gen_pwd_filled'), 'ok');
-    setTimeout(() => { passInput.type = 'password'; }, 4000);
+    setTimeout(() => {
+      passInput.type = 'password';
+      syncEyeIcon(passInput, document.getElementById('btnTogglePass'));
+    }, 4000);
   });
 
   document.getElementById('btnCreate').onclick = async () => {
@@ -1660,6 +1829,7 @@ function showDecrypt(payload){
       passInput.value = '';
       document.getElementById('pass2').value = '';
       updatePwdStrength();
+      syncEyeIcon(passInput, document.getElementById('btnTogglePass'));
 
       if (payload.v === 2) {
         setStatus(st, t('warn_no_pwd'), 'warn');
