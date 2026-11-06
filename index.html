@@ -179,6 +179,12 @@
     position: relative;
   }
 
+  #langToggle {
+    font-size: 1.25rem;
+    line-height: 1;
+    font-weight: 400;
+  }
+
   .icon-btn::after { display: none; }
   .icon-btn:hover { background: var(--card-hi); border-color: var(--border-gold); transform: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .icon-btn:active { transform: scale(0.95); }
@@ -614,6 +620,7 @@
       min-height: 34px;
       font-size: 0.85rem;
     }
+    #langToggle { font-size: 1.05rem; }
 
     h2 {
       font-size: 1rem;
@@ -763,6 +770,7 @@
       min-height: 30px;
       font-size: 0.78rem;
     }
+    #langToggle { font-size: 0.95rem; }
     .top-controls { gap: 0.35rem; }
     .header-top { margin-bottom: 0.45rem; }
 
@@ -1176,6 +1184,8 @@ const translations = {
   }
 };
 
+const langFlags = { fr: '🇫🇷', en: '🇬🇧', it: '🇮🇹', tr: '🇹🇷' };
+
 let currentLang = 'fr';
 
 function t(key, vars) {
@@ -1203,7 +1213,6 @@ function setLanguage(lang) {
     el.innerHTML = t(el.getAttribute('data-i18n-html'));
   });
 
-  const langFlags = { fr: '🇫🇷', en: '🇬🇧', it: '🇮🇹', tr: '🇹🇷' };
   document.getElementById('langToggle').textContent = langFlags[lang] || lang.toUpperCase();
   document.querySelectorAll('.dropdown-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
