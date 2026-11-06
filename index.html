@@ -849,7 +849,7 @@
 
     <div class="top-controls">
       <div class="lang-dropdown">
-        <button class="icon-btn" id="langToggle" aria-label="Language">FR</button>
+        <button class="icon-btn" id="langToggle" aria-label="Language">🇫🇷</button>
         <div class="dropdown-menu" id="langMenu">
           <button class="dropdown-item active" data-lang="fr"><span class="flag">🇫🇷</span> Français</button>
           <button class="dropdown-item" data-lang="en"><span class="flag">🇬🇧</span> English</button>
@@ -1203,7 +1203,8 @@ function setLanguage(lang) {
     el.innerHTML = t(el.getAttribute('data-i18n-html'));
   });
 
-  document.getElementById('langToggle').textContent = lang.toUpperCase();
+  const langFlags = { fr: '🇫🇷', en: '🇬🇧', it: '🇮🇹', tr: '🇹🇷' };
+  document.getElementById('langToggle').textContent = langFlags[lang] || lang.toUpperCase();
   document.querySelectorAll('.dropdown-item').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
